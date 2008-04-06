@@ -186,6 +186,22 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 			// help, etc
 			if(!strcmp("ping", g_list_nth_data(msg->params, 1)))
 					lp_send(server, "privmsg %s :pong", msg->to);
+			if(!strcmp("whoami", g_list_nth_data(msg->params, 1)))
+			{
+				int found=0;
+				for(i=0;i<g_list_length(config->users);i++)
+				{
+					lp_user *user = g_list_nth_data(config->users, i);
+					if(!strcmp(user->mask, msg->from))
+					{
+						found=1;
+						lp_send(server, "privmsg %s :you are %s", msg->to, user->login);
+						break;
+					}
+				}
+				if(!found)
+					lp_send(server, "privmsg %s :i don't know who you are", msg->to);
+			}
 		}
 	}
 	lp_msg_free(msg);
