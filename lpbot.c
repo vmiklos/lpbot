@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <poll.h>
 #include <errno.h>
 #include <glib-object.h>
 
@@ -38,6 +39,7 @@ int lp_send(lp_server* server, char *fmt, ...)
 {
 	va_list ap;
 	char buf[IRC_LINE_LENGHT+1];
+	struct pollfd pfd[1];
 
 	if(!server)
 		server = g_list_nth_data(servers, 0);
@@ -50,6 +52,17 @@ int lp_send(lp_server* server, char *fmt, ...)
 	printf("sending message '%s'\n", buf);
 	buf[strlen(buf)+1] = '\0';
 	buf[strlen(buf)] = '\n';
+
+	// check if we can write to avoid a sigpipe
+	pfd[0].fd = server->sock;
+	pfd[0].events = POLLOUT;
+
+	poll(pfd, 1, 1000);
+	if(pfd[0].revents & POLLHUP)
+	{
+		lp_reconnect(server, NULL);
+		return FALSE;
+	}
 	return write(server->sock, buf, strlen(buf));
 }
 
@@ -183,7 +196,8 @@ int lp_connect(lp_server *server)
 
 int lp_disconnect(lp_server *server, char *msg)
 {
-	lp_send(server, "quit :%s", msg);
+	if(msg)
+		lp_send(server, "quit :%s", msg);
 	close(server->sock);
 	server->sock = 0;
 	servers = g_list_remove(servers, server);
