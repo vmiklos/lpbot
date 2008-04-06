@@ -12,4 +12,13 @@ typedef struct __lp_server
 	int sock;
 } lp_server;
 
+typedef struct __lp_msg
+{
+	char *raw;
+	char *from;
+	char *to;
+	char *cmd;
+	GList *params;
+} lp_msg;
+
 extern GList *servers;

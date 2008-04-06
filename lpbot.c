@@ -50,11 +50,55 @@ int lp_send(lp_server* server, char *fmt, ...)
 	return write(server->sock, buf, strlen(buf));
 }
 
+void lp_dump_msg(lp_msg *msg)
+{
+	int i;
+
+	printf("lp_dump_msg() from: '%s', cmd: '%s', to: '%s'", msg->from, msg->cmd, msg->to);
+	if(g_list_length(msg->params))
+		printf(", params: ");
+	for(i=0;i<g_list_length(msg->params);i++)
+	{
+		printf("'%s' ", (char*)g_list_nth_data(msg->params, i));
+	}
+	printf("\n");
+}
+
+lp_msg *lp_parse(char *str)
+{
+	char *p;
+	lp_msg *msg = g_new0(struct __lp_msg, 1);
+	msg->raw = g_strdup(str);
+	msg->from = msg->raw;
+
+	p = strchr(msg->raw, ' ');
+	// every irc msg should have a from/to/cmd
+	if(!p)
+		return NULL;
+	*p = '\0';
+	msg->cmd = ++p;
+	p = strchr(msg->cmd, ' ');
+	if(!p)
+		return NULL;
+	*p = '\0';
+	msg->to = ++p;
+	p = strchr(msg->to, ' ');
+	// params are optional
+	if(p)
+	{
+		*p = '\0';
+		msg->params = g_list_append(msg->params, ++p);
+	}
+	lp_dump_msg(msg);
+	return msg;
+}
+
 int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	char c = 0, buf[IRC_LINE_LENGHT+1] = "";
 	int i = 0, len;
 	lp_server *server = (lp_server*)data;
+	lp_msg *msg;
 
 	while(c != '\n' && i < IRC_LINE_LENGHT)
 	{
@@ -74,7 +118,9 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 		lp_send(NULL, buf);
 		return TRUE;
 	}
-	printf("%s\n", buf);
+	msg = lp_parse(buf);
+	if(!msg)
+		printf("yikes, msg is NULL for '%s'!\n", buf);
 	return TRUE;
 }
 
