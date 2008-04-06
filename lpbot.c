@@ -121,6 +121,12 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 		return TRUE;
 	}
 	msg = lp_parse(buf);
+	if(!strcmp(msg->cmd, "001"))
+	{
+		// welcome
+		for(i=0;i<g_list_length(server->channels); i++)
+			lp_send(server, "join :%s", (char*)g_list_nth_data(server->channels, i));
+	}
 	return TRUE;
 }
 
