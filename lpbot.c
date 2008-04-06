@@ -105,12 +105,16 @@ lp_msg *lp_parse(char *str)
 	p = strchr(msg->to, ' ');
 	// params are optional
 	if(p)
+	{
+		if(*(p+1)==':')
+			p++;
 		while(p)
 		{
 			*p = '\0';
 			msg->params = g_list_append(msg->params, ++p);
 			p = strchr(p, ' ');
 		}
+	}
 	lp_dump_msg(msg);
 	return msg;
 }
