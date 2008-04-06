@@ -86,6 +86,8 @@ lp_msg *lp_parse(char *str)
 	lp_msg *msg = g_new0(lp_msg, 1);
 	msg->raw = g_strdup(str);
 	msg->from = msg->raw;
+	if(msg->from[0] == ':')
+		msg->from++;
 
 	printf("parsing message '%s'\n", msg->raw);
 
