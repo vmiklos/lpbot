@@ -71,6 +71,8 @@ lp_msg *lp_parse(char *str)
 	msg->raw = g_strdup(str);
 	msg->from = msg->raw;
 
+	printf("parsing message '%s'\n", msg->raw);
+
 	p = strchr(msg->raw, ' ');
 	// every irc msg should have a from/to/cmd
 	if(!p)
@@ -121,6 +123,9 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 		return TRUE;
 	}
 	msg = lp_parse(buf);
+	// probably a ping which is handled by the idle handler or so
+	if(!msg)
+		return TRUE;
 	if(!strcmp(msg->cmd, "001"))
 	{
 		// welcome
