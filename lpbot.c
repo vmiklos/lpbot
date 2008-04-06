@@ -3,6 +3,8 @@
 #include <netdb.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+#include <glib-object.h>
 
 #define IRC_LINE_LENGHT 512
 
@@ -32,11 +34,27 @@ int lp_send(int sock, char *msg)
 	return write(sock, msg, strlen(msg));
 }
 
-int lp_recv(int sock)
+int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 {
-	char buf[IRC_LINE_LENGHT+1];
-	read(sock, &buf, IRC_LINE_LENGHT);
+	char c = 0, buf[IRC_LINE_LENGHT+1] = "";
+	int i = 0, len;
+	int sock;
+
+	sock = (int)data;
+
+	while(c != '\n' && i < IRC_LINE_LENGHT)
+	{
+		if((len = read(sock, &c, 1))<=0)
+		{
+			perror("read");
+			return FALSE;
+		}
+		buf[i++] = c;
+	}
+	buf[i-2] = '\0';
 	printf("got from server: '%s'\n", buf);
+	fflush(stdout);
+	return TRUE;
 }
 
 int main()
@@ -44,6 +62,9 @@ int main()
 	struct hostent host;
 	int sock;
 	struct sockaddr_in conn;
+
+	GIOChannel* chan;
+	GMainLoop* loop;
 
 	lp_resolve("localhost", &host);
 	sock = lp_create_sock();
@@ -56,10 +77,12 @@ int main()
 		perror("connect");
 		return 1;
 	}
-	lp_send(sock, "pass lpbot\n");
+	chan = g_io_channel_unix_new(sock);
+	g_io_add_watch(chan, G_IO_IN, lp_handler, (gpointer)sock);
 	lp_send(sock, "nick lpbot\n");
 	lp_send(sock, "user lpbot 8 * :lpbot\n");
-	lp_send(sock, "join :#lpbot\n");
-	while(1)
-		lp_recv(sock);
+
+	loop = g_main_loop_new(NULL, TRUE);
+	g_main_loop_run(loop);
+	return 0;
 }
