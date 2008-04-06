@@ -129,10 +129,9 @@ int lp_ping(gpointer data)
 	if(server->lastpong != 0 && lag > 300)
 	{
 		lp_reconnect(server, "Connection timed out");
-		return TRUE;
+		return FALSE;
 	}
 	lp_send(server, "PING %s", server->nick);
-	sleep(10);
 	return TRUE;
 }
 
@@ -170,7 +169,7 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 		// welcome
 		for(i=0;i<g_list_length(server->channels); i++)
 			lp_send(server, "join :%s", (char*)g_list_nth_data(server->channels, i));
-		g_idle_add(lp_ping, (gpointer)server);
+		g_timeout_add(10000, lp_ping, (gpointer)server);
 	}
 	else if(!strcmp(msg->cmd, "PONG"))
 	{
