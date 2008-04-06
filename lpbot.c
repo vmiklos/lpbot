@@ -45,6 +45,7 @@ int lp_send(lp_server* server, char *fmt, ...)
 	va_start(ap, fmt);
 	vsnprintf(buf, IRC_LINE_LENGHT-1, fmt, ap);
 	va_end(ap);
+	printf("sending message '%s'\n", buf);
 	buf[strlen(buf)+1] = '\0';
 	buf[strlen(buf)] = '\n';
 	return write(server->sock, buf, strlen(buf));
@@ -95,6 +96,14 @@ lp_msg *lp_parse(char *str)
 		}
 	lp_dump_msg(msg);
 	return msg;
+}
+
+int lp_ping(gpointer data)
+{
+	lp_server *server = (lp_server*)data;
+	lp_send(server, "PING %s", server->nick);
+	sleep(10);
+	return TRUE;
 }
 
 int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
@@ -161,6 +170,7 @@ int main()
 		}
 		server->chan = g_io_channel_unix_new(server->sock);
 		g_io_add_watch(server->chan, G_IO_IN, lp_handler, (gpointer)server);
+		g_idle_add(lp_ping, (gpointer)server);
 		lp_send(server, "nick %s", server->nick);
 		lp_send(server, "user %s 8 * :%s", server->username, server->realname);
 	}
