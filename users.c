@@ -20,8 +20,6 @@ int parseUser(xmlDoc *doc, xmlNode *cur)
 			user->login = strdup((char*)key);
 		else if ((!xmlStrcmp(cur->name, (const xmlChar *)"pass")))
 			user->pass = strdup((char*)key);
-		else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mask")))
-			user->mask = strdup((char*)key);
 		else if ((!xmlStrcmp(cur->name, (const xmlChar *)"right_db")))
 		{
 			if(atoi((char*)key))

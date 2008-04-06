@@ -114,6 +114,9 @@ lp_msg *lp_parse(char *str)
 			p = strchr(p, ' ');
 		}
 	}
+	p = strchr(msg->from, '!');
+	if(p)
+		*p = '\0';
 	lp_dump_msg(msg);
 	return msg;
 }
@@ -188,19 +191,32 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 					lp_send(server, "privmsg %s :pong", msg->to);
 			if(!strcmp("whoami", g_list_nth_data(msg->params, 1)))
 			{
-				int found=0;
 				for(i=0;i<g_list_length(config->users);i++)
 				{
 					lp_user *user = g_list_nth_data(config->users, i);
-					if(!strcmp(user->mask, msg->from))
+					if(!strcmp(user->login, msg->from) && user->identified)
+						lp_send(server, "privmsg %s :i know who you are, %s.",
+								msg->to, user->login);
+				}
+			}
+			if(!strcmp("identify", g_list_nth_data(msg->params, 1)))
+			{
+				if(config->ident_method == LP_IDENT_PASS)
+				{
+					for(i=0;i<g_list_length(config->users);i++)
 					{
-						found=1;
-						lp_send(server, "privmsg %s :you are %s", msg->to, user->login);
-						break;
+						lp_user *user = g_list_nth_data(config->users, i);
+						if(!strcmp(user->login, msg->from) &&
+								g_list_length(msg->params) == 3 &&
+								!strcmp(user->pass, g_list_nth_data(msg->params, 2)))
+						{
+							user->identified = 1;
+							lp_send(server, "privmsg %s :ok, now i know you, %s.",
+									msg->to, user->login);
+							break;
+						}
 					}
 				}
-				if(!found)
-					lp_send(server, "privmsg %s :i don't know who you are", msg->to);
 			}
 		}
 	}

@@ -12,10 +12,17 @@ typedef struct __lp_msg
 	GList *params;
 } lp_msg;
 
+enum
+{
+	LP_IDENT_PASS = 1,
+	LP_IDENT_SERVICES
+};
+
 typedef struct __lp_config
 {
 	GList *servers;
 	GList *users;
+	int ident_method;
 } lp_config;
 
 int lp_disconnect(lp_server *server, char *msg);
