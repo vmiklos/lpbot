@@ -5,12 +5,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <glib-object.h>
 
 #include "lpbot.h"
 #include "config.h"
-
-#define IRC_LINE_LENGHT 512
 
 GList *servers;
 
@@ -125,10 +124,10 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 
 	while(c != '\n' && i < IRC_LINE_LENGHT)
 	{
-		if((len = read(server->sock, &c, 1))<=0)
+		len = read(server->sock, &c, 1);
+		if(len == 0 || ( len < 0 && !sockerr_again() ))
 		{
-			if(len<0)
-				perror("read");
+			lp_reconnect(server, "Read error");
 			return FALSE;
 		}
 		buf[i++] = c;
