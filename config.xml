@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config>
-	<servers>
-		<server>
-			<address>localhost</address>
-			<port>6667</port>
-			<nick>lpbot</nick>
-			<username>lpuser</username>
-			<realname>Lp Bot</relname>
-		</server>
-	</servers>
-</config>
+<servers>
+	<server>
+		<chatname>freenode</chatname>
+		<address>localhost</address>
+		<port>6667</port>
+		<nick>lpbot</nick>
+		<username>lpuser</username>
+		<realname>Lp Bot</realname>
+		<channel>#lpbot</channel>
+	</server>
+</servers>

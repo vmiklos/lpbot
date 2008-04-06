@@ -6,9 +6,12 @@
 #include <unistd.h>
 #include <glib-object.h>
 
+#include "lpbot.h"
+#include "config.h"
+
 #define IRC_LINE_LENGHT 512
 
-int server_sock;
+GList *servers;
 
 int lp_resolve(char *server, struct hostent *host)
 {
@@ -31,24 +34,31 @@ int lp_create_sock()
 	return sock;
 }
 
-int lp_send(int sock, char *msg)
+int lp_send(lp_server* server, char *fmt, ...)
 {
+	va_list ap;
 	char buf[IRC_LINE_LENGHT+1];
-	g_snprintf(buf, IRC_LINE_LENGHT, "%s\n", msg);
-	return write(sock, buf, strlen(buf));
+
+	if(!server)
+		server = g_list_nth_data(servers, 0);
+
+	va_start(ap, fmt);
+	vsnprintf(buf, IRC_LINE_LENGHT-1, fmt, ap);
+	va_end(ap);
+	buf[strlen(buf)+1] = '\0';
+	buf[strlen(buf)] = '\n';
+	return write(server->sock, buf, strlen(buf));
 }
 
 int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	char c = 0, buf[IRC_LINE_LENGHT+1] = "";
 	int i = 0, len;
-	int sock;
-
-	sock = (int)data;
+	lp_server *server = (lp_server*)data;
 
 	while(c != '\n' && i < IRC_LINE_LENGHT)
 	{
-		if((len = read(sock, &c, 1))<=0)
+		if((len = read(server->sock, &c, 1))<=0)
 		{
 			if(len<0)
 				perror("read");
@@ -59,41 +69,48 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	if(buf[i-2]=='\r')
 		i--;
 	buf[i-1] = '\0';
-	if(sock != STDIN_FILENO)
+	if(server->sock != STDIN_FILENO)
 		printf("%s\n", buf);
 	else
-		lp_send(server_sock, buf);
+		lp_send(NULL, buf);
 	fflush(stdout);
 	return TRUE;
 }
 
 int main()
 {
-	struct hostent host;
-	int sock;
-	struct sockaddr_in conn;
-
-	GIOChannel *sock_chan, *kbd_chan;
+	int i;
 	GMainLoop *loop;
 
-	lp_resolve("localhost", &host);
-	sock = lp_create_sock();
-	server_sock = sock;
-	conn.sin_family = AF_INET;
-	conn.sin_port = htons(6667);
-	conn.sin_addr = *((struct in_addr *) host.h_addr);
-	bzero(&(conn.sin_zero), 8);
-	if(connect(sock, (struct sockaddr *)&conn, sizeof(struct sockaddr))<0)
+	parseConfig("config.xml");
+
+	for(i=0;i<g_list_length(servers);i++)
 	{
-		perror("connect");
-		return 1;
+		struct hostent host;
+		struct sockaddr_in conn;
+
+		lp_server *server = g_list_nth_data(servers, i);
+		lp_resolve(server->address, &host);
+		server->sock = lp_create_sock();
+		conn.sin_family = AF_INET;
+		conn.sin_port = htons(6667);
+		conn.sin_addr = *((struct in_addr *) host.h_addr);
+		memset(&(conn.sin_zero), 0, 8);
+		if(connect(server->sock, (struct sockaddr *)&conn, sizeof(struct sockaddr))<0)
+		{
+			perror("connect");
+			return 1;
+		}
+		server->chan = g_io_channel_unix_new(server->sock);
+		g_io_add_watch(server->chan, G_IO_IN, lp_handler, (gpointer)server);
+		lp_send(server, "nick %s", server->nick);
+		lp_send(server, "user %s 8 * :%s", server->username, server->realname);
 	}
-	sock_chan = g_io_channel_unix_new(sock);
-	g_io_add_watch(sock_chan, G_IO_IN, lp_handler, (gpointer)sock);
-	kbd_chan = g_io_channel_unix_new(STDIN_FILENO);
-	g_io_add_watch(kbd_chan, G_IO_IN, lp_handler, (gpointer)STDIN_FILENO);
-	lp_send(sock, "nick lpbot\n");
-	lp_send(sock, "user lpbot 8 * :lpbot\n");
+	// debug
+	lp_server *kbd = g_new0(struct __lp_server, 1);
+	kbd->chan = g_io_channel_unix_new(STDIN_FILENO);
+	kbd->sock = STDIN_FILENO;
+	g_io_add_watch(kbd->chan, G_IO_IN, lp_handler, (gpointer)kbd);
 
 	loop = g_main_loop_new(NULL, TRUE);
 	g_main_loop_run(loop);
