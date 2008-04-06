@@ -1,0 +1,49 @@
+= IRC bot
+Vajna Miklós <vmiklos@vmiklos.hu>
+
+== Specifikáció
+
+=== Funkciók
+
+A beadandó feladatom célja egy IRC bot létrehozása, minimálisan a
+következõ funkciókkal:
+
+* automatikus csatlakozás párhuzamosan több kiszolgálóhoz, azon belül
+  több csatornához, hiba esetén automatikus újracsatlakozás
+
+* felhasználók azonosítása (jelszóval és/vagy a hálózaton elérhetõ
+  services segítségével)
+
+* egyszerû wiki-szerû adatbázis megvalósítása, megfelelõ jogosultsággal
+  rendelkezõ felhasználók tudnak rekordokat létrehozni (ehhez
+  létrehozási és módosítási dátum, valamint régebbi verziók tárolása)
+
+* bot vezérlése tcp porton keresztül: megfelelõ jogosultsággal
+  rendelkezõ felhasználók csatlakozhatnak egy vezérlõprogrammal a bothoz
+  és utasíthatják különbözõ mûveletek elvégzésére (pl. csatlakozás új
+  kiszolgálóhoz ha jelenleg egy kiszolgálóhoz sincs kapcsolat)
+
+* egyéb extra kényelmi funkciók: RSS olvasó (új hírek linkjeit beírja
+  egy megadott csatornára), elfelejtett jelszó elküldése e-mailben.
+
+=== Elkészülõ anyagok
+
+* maga az IRC bot (lpbot), ezt futtatja az üzemeltetõ
+
+* a botot vezérlõ segédprogram (lpbotctl), ezt futtathatják a megfelelõ
+  hozzáféréssel rendelkezõ felhasználók
+
+* üzemeltetési dokumentáció
+
+* felhasználói dokumentáció
+
+* fejlesztõi dokumentáció
+
+== Elkészült funkciók
+
+* automatikus csatlakozás párhuzamosan több kiszolgálóhoz
+* automaikus join több csatornához, sikeres csatlakozás esetén
+* hálózati hibák esetén (ping timeout, read/write hiba) automatikus
+  újracsatlakozás
+
+// vim: ft=asciidoc
