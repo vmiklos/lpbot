@@ -25,3 +25,4 @@ typedef struct __lp_msg
 
 extern GList *servers;
 int lp_disconnect(lp_server *server, char *msg);
+int lp_reconnect(lp_server *server, char *msg);

@@ -102,9 +102,16 @@ lp_msg *lp_parse(char *str)
 
 int lp_ping(gpointer data)
 {
+	//static int c = 0;
 	lp_server *server = (lp_server*)data;
 	lp_send(server, "PING %s", server->nick);
 	sleep(10);
+	/*c++;
+	if(c>2)
+	{
+		c=0;
+		lp_reconnect(server, "Connection timed out");
+	}*/
 	return TRUE;
 }
 
@@ -176,6 +183,13 @@ int lp_disconnect(lp_server *server, char *msg)
 	close(server->sock);
 	server->sock = 0;
 	servers = g_list_remove(servers, server);
+	return 0;
+}
+
+int lp_reconnect(lp_server *server, char *msg)
+{
+	lp_disconnect(server, msg);
+	lp_connect(server);
 	return 0;
 }
 
