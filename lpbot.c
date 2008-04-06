@@ -73,7 +73,6 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 		printf("%s\n", buf);
 	else
 		lp_send(NULL, buf);
-	fflush(stdout);
 	return TRUE;
 }
 
