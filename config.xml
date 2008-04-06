@@ -2,6 +2,7 @@
 <config>
 	<options>
 		<ident_method>pass</ident_method>
+		<!--<ident_method>services</ident_method>-->
 	</options>
 	<server>
 		<chatname>unreal</chatname>

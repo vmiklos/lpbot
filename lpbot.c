@@ -144,15 +144,23 @@ int lp_ping(gpointer data)
 	return TRUE;
 }
 
+char *lp_to(lp_server *server, lp_msg *msg)
+{
+	// if the msg is from a channel, then returns the channel, if
+	// it's from a query, then return the user
+	char *ret;
+
+	if(!strcmp(server->nick, msg->to))
+		ret = msg->from;
+	else
+		ret = msg->to;
+	return ret;
+}
+
 int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 {
 	int i;
-	char *to;
-
-	if(!strcmp(server->nick, msg->to))
-		to = msg->from;
-	else
-		to = msg->to;
+	char *to = lp_to(server, msg);
 
 	// FIXME: this could be more generic to provide
 	// help, etc
@@ -185,6 +193,13 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 					break;
 				}
 			}
+		}
+		if(config->ident_method == LP_IDENT_SERVICES)
+		{
+			if(config->ident_to)
+				free(config->ident_to);
+			config->ident_to = g_strdup(to);
+			lp_send(server, "whois %s", msg->from);
 		}
 	}
 	return 0;
@@ -225,6 +240,25 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 		for(i=0;i<g_list_length(server->channels); i++)
 			lp_send(server, "join :%s", (char*)g_list_nth_data(server->channels, i));
 		g_timeout_add(10000, lp_ping, (gpointer)server);
+	}
+	else if(!strcmp(msg->cmd, "320"))
+	{
+		// identified
+		if(config->ident_method == LP_IDENT_SERVICES)
+		{
+			for(i=0;i<g_list_length(config->users);i++)
+			{
+				lp_user *user = g_list_nth_data(config->users, i);
+				if(g_list_length(msg->params) > 0 &&
+						!strcmp(user->login, g_list_nth_data(msg->params, 0)))
+				{
+					user->identified = 1;
+					lp_send(server, "privmsg %s :ok, now i know you, %s.",
+							config->ident_to, user->login);
+					break;
+				}
+			}
+		}
 	}
 	else if(!strcmp(msg->cmd, "PONG"))
 	{

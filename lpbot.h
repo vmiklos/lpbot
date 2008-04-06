@@ -23,6 +23,7 @@ typedef struct __lp_config
 	GList *servers;
 	GList *users;
 	int ident_method;
+	char* ident_to;
 } lp_config;
 
 int lp_disconnect(lp_server *server, char *msg);
