@@ -121,8 +121,6 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 		return TRUE;
 	}
 	msg = lp_parse(buf);
-	if(!msg)
-		printf("yikes, msg is NULL for '%s'!\n", buf);
 	return TRUE;
 }
 
