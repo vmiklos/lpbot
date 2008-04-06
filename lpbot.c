@@ -10,7 +10,6 @@
 #include <glib-object.h>
 
 #include "lpbot.h"
-#include "config.h"
 
 lp_config *config;
 
@@ -238,7 +237,7 @@ int main()
 	GMainLoop *loop;
 	config = g_new0(lp_config, 1);
 
-	parseConfig("config.xml");
+	parseConfig("servers.xml");
 	parseUsers("users.xml");
 
 	for(i=0;i<g_list_length(config->servers);i++)

@@ -29,7 +29,7 @@ int lp_reconnect(lp_server *server, char *msg);
 #define IRC_LINE_LENGHT 512
 #define sockerr_again() (errno == EINPROGRESS || errno == EINTR)
 
-#include "config.h"
+#include "servers.h"
 #include "users.h"
 
 typedef struct __lp_config
