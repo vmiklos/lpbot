@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <glib-object.h>
 
 #include "lpbot.h"
@@ -70,7 +71,7 @@ void lp_dump_msg(lp_msg *msg)
 lp_msg *lp_parse(char *str)
 {
 	char *p;
-	lp_msg *msg = g_new0(struct __lp_msg, 1);
+	lp_msg *msg = g_new0(lp_msg, 1);
 	msg->raw = g_strdup(str);
 	msg->from = msg->raw;
 
@@ -102,16 +103,16 @@ lp_msg *lp_parse(char *str)
 
 int lp_ping(gpointer data)
 {
-	//static int c = 0;
 	lp_server *server = (lp_server*)data;
+	int lag = time(NULL) - server->lastpong;
+
+	if(server->lastpong != 0 && lag > 300)
+	{
+		lp_reconnect(server, "Connection timed out");
+		return TRUE;
+	}
 	lp_send(server, "PING %s", server->nick);
 	sleep(10);
-	/*c++;
-	if(c>2)
-	{
-		c=0;
-		lp_reconnect(server, "Connection timed out");
-	}*/
 	return TRUE;
 }
 
@@ -149,6 +150,11 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 		// welcome
 		for(i=0;i<g_list_length(server->channels); i++)
 			lp_send(server, "join :%s", (char*)g_list_nth_data(server->channels, i));
+		g_idle_add(lp_ping, (gpointer)server);
+	}
+	else if(!strcmp(msg->cmd, "PONG"))
+	{
+		server->lastpong = time(NULL);
 	}
 	return TRUE;
 }
@@ -171,7 +177,6 @@ int lp_connect(lp_server *server)
 	}
 	server->chan = g_io_channel_unix_new(server->sock);
 	g_io_add_watch(server->chan, G_IO_IN, lp_handler, (gpointer)server);
-	g_idle_add(lp_ping, (gpointer)server);
 	lp_send(server, "nick %s", server->nick);
 	lp_send(server, "user %s 8 * :%s", server->username, server->realname);
 	return 0;
@@ -203,7 +208,7 @@ int main()
 	for(i=0;i<g_list_length(servers);i++)
 		lp_connect(g_list_nth_data(servers, i));
 	// debug
-	lp_server *kbd = g_new0(struct __lp_server, 1);
+	lp_server *kbd = g_new0(lp_server, 1);
 	kbd->chan = g_io_channel_unix_new(STDIN_FILENO);
 	kbd->sock = STDIN_FILENO;
 	g_io_add_watch(kbd->chan, G_IO_IN, lp_handler, (gpointer)kbd);
