@@ -1,56 +1,54 @@
 = IRC bot
-Vajna Miklós <vmiklos@vmiklos.hu>
+Miklos Vajna <vmiklos@vmiklos.hu>
 
-== Specifikáció
+== Specification
 
-=== Funkciók
+=== Functions
 
-A beadandó feladatom célja egy IRC bot létrehozása, minimálisan a
-következõ funkciókkal:
+My aim is to create an IRC bot, with the following minimal features:
 
-* automatikus csatlakozás párhuzamosan több kiszolgálóhoz, azon belül
-  több csatornához, hiba esetén automatikus újracsatlakozás
+* automatic connect pararelly to multiple servers, and to multiple
+  channels within a server, automatic reconnect on network errors
 
-* felhasználók azonosítása (jelszóval és/vagy a hálózaton elérhetõ
-  services segítségével)
+* authentication of users (with password and/or using services available
+  on the network)
 
-* egyszerû wiki-szerû adatbázis megvalósítása, megfelelõ jogosultsággal
-  rendelkezõ felhasználók tudnak rekordokat létrehozni (ehhez
-  létrehozási és módosítási dátum, valamint régebbi verziók tárolása)
+* implementation of a simple wiki-like database, users with sufficent
+  privileges can create records (storing creation and moficiation time
+  for each record, storing old versions as well)
 
-* bot vezérlése tcp porton keresztül: megfelelõ jogosultsággal
-  rendelkezõ felhasználók csatlakozhatnak egy vezérlõprogrammal a bothoz
-  és utasíthatják különbözõ mûveletek elvégzésére (pl. csatlakozás új
-  kiszolgálóhoz ha jelenleg egy kiszolgálóhoz sincs kapcsolat)
+* controlling the bot via a tcp port: users with sufficent privileges
+  can connect to the bot using a utility program and can control it to
+  execute given commands (for example connect to a new server if the bot
+  is not connected to any server)
 
-* egyéb extra kényelmi funkciók: RSS olvasó (új hírek linkjeit beírja
-  egy megadott csatornára), elfelejtett jelszó elküldése e-mailben.
+* other extra nice features: RSS reader (announces the link of new
+  entries to a given channel), sending forgotten password via e-mail.
 
-=== Elkészülõ anyagok
+=== Papers
 
-* maga az IRC bot (lpbot), ezt futtatja az üzemeltetõ
+* the IRC bot itself (`lpbot`), ran by the administrator
 
-* a botot vezérlõ segédprogram (lpbotctl), ezt futtathatják a megfelelõ
-  hozzáféréssel rendelkezõ felhasználók
+* the utility controller program (`lpbotctl`), run by the users with
+  sufficent privileges
 
-* üzemeltetési dokumentáció
+* administrator guide
 
-* felhasználói dokumentáció
+* user guide
 
-* fejlesztõi dokumentáció
+* developer guide
 
-== Elkészült funkciók
+== Implemented features
 
-* automatikus csatlakozás párhuzamosan több kiszolgálóhoz
-* automaikus join több csatornához, sikeres csatlakozás esetén
-* hálózati hibák esetén (ping timeout, read/write hiba) automatikus
-  újracsatlakozás
+* automatic connect to multiple servers, paralelly
+* automatic join to multiple channels, if the connect was successful
+* automatic reconnect on network error (ping timeout, read/write error)
 
-* parancsok elérése mind csatornán keresztül (highlighton keresztül)
-  mint privát ablakban
+* commands are available via the public channel (via highlight) or in a
+  private query as well
 
-* `identify` parancs, mely services esetén nem igényel további
-  paramétereket, jelszavas hitelesítés esetén pedig egy jelszó
-  paramétert igényel
+* `identify` command, it requires no more parameters in case using
+  services, or requires one password parameter if configured to use
+  password authentication
 
 // vim: ft=asciidoc
