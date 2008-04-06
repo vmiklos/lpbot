@@ -115,6 +115,12 @@ lp_msg *lp_parse(char *str)
 	return msg;
 }
 
+void lp_msg_free(lp_msg *msg)
+{
+	free(msg->raw);
+	free(msg);
+}
+
 int lp_ping(gpointer data)
 {
 	lp_server *server = (lp_server*)data;
@@ -170,6 +176,7 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	{
 		server->lastpong = time(NULL);
 	}
+	lp_msg_free(msg);
 	return TRUE;
 }
 
