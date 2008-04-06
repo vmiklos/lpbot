@@ -106,7 +106,10 @@ lp_msg *lp_parse(char *str)
 	if(p)
 	{
 		if(*(p+1)==':')
+		{
+			*p = '\0';
 			p++;
+		}
 		while(p)
 		{
 			*p = '\0';
@@ -139,6 +142,52 @@ int lp_ping(gpointer data)
 	}
 	lp_send(server, "PING %s", server->nick);
 	return TRUE;
+}
+
+int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
+{
+	int i;
+	char *to;
+
+	if(!strcmp(server->nick, msg->to))
+		to = msg->from;
+	else
+		to = msg->to;
+
+	// FIXME: this could be more generic to provide
+	// help, etc
+	if(!strcmp("ping", g_list_nth_data(params, 0)))
+		lp_send(server, "privmsg %s :pong", to);
+	if(!strcmp("whoami", g_list_nth_data(params, 0)))
+	{
+		for(i=0;i<g_list_length(config->users);i++)
+		{
+			lp_user *user = g_list_nth_data(config->users, i);
+			if(!strcmp(user->login, msg->from) && user->identified)
+				lp_send(server, "privmsg %s :i know who you are, %s.",
+						to, user->login);
+		}
+	}
+	if(!strcmp("identify", g_list_nth_data(params, 0)))
+	{
+		if(config->ident_method == LP_IDENT_PASS)
+		{
+			for(i=0;i<g_list_length(config->users);i++)
+			{
+				lp_user *user = g_list_nth_data(config->users, i);
+				if(!strcmp(user->login, msg->from) &&
+						g_list_length(params) == 2 &&
+						!strcmp(user->pass, g_list_nth_data(params, 1)))
+				{
+					user->identified = 1;
+					lp_send(server, "privmsg %s :ok, now i know you, %s.",
+							to, user->login);
+					break;
+				}
+			}
+		}
+	}
+	return 0;
 }
 
 int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
@@ -184,41 +233,11 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	else if(!strcmp(msg->cmd, "PRIVMSG"))
 	{
 		if(!strncmp(server->nick, g_list_nth_data(msg->params, 0), strlen(server->nick)))
-		{
-			// FIXME: this could be more generic to provide
-			// help, etc
-			if(!strcmp("ping", g_list_nth_data(msg->params, 1)))
-					lp_send(server, "privmsg %s :pong", msg->to);
-			if(!strcmp("whoami", g_list_nth_data(msg->params, 1)))
-			{
-				for(i=0;i<g_list_length(config->users);i++)
-				{
-					lp_user *user = g_list_nth_data(config->users, i);
-					if(!strcmp(user->login, msg->from) && user->identified)
-						lp_send(server, "privmsg %s :i know who you are, %s.",
-								msg->to, user->login);
-				}
-			}
-			if(!strcmp("identify", g_list_nth_data(msg->params, 1)))
-			{
-				if(config->ident_method == LP_IDENT_PASS)
-				{
-					for(i=0;i<g_list_length(config->users);i++)
-					{
-						lp_user *user = g_list_nth_data(config->users, i);
-						if(!strcmp(user->login, msg->from) &&
-								g_list_length(msg->params) == 3 &&
-								!strcmp(user->pass, g_list_nth_data(msg->params, 2)))
-						{
-							user->identified = 1;
-							lp_send(server, "privmsg %s :ok, now i know you, %s.",
-									msg->to, user->login);
-							break;
-						}
-					}
-				}
-			}
-		}
+			// highlight
+			lp_handle_command(server, msg, g_list_next(msg->params));
+		else if(!strncmp(server->nick, msg->to, strlen(server->nick)))
+			// query
+			lp_handle_command(server, msg, msg->params);
 	}
 	lp_msg_free(msg);
 	return TRUE;
