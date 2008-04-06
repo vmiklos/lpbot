@@ -46,4 +46,11 @@ következõ funkciókkal:
 * hálózati hibák esetén (ping timeout, read/write hiba) automatikus
   újracsatlakozás
 
+* parancsok elérése mind csatornán keresztül (highlighton keresztül)
+  mint privát ablakban
+
+* `identify` parancs, mely services esetén nem igényel további
+  paramétereket, jelszavas hitelesítés esetén pedig egy jelszó
+  paramétert igényel
+
 // vim: ft=asciidoc

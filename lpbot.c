@@ -273,6 +273,18 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 			// query
 			lp_handle_command(server, msg, msg->params);
 	}
+	else if(!strcmp(msg->cmd, "QUIT") || !strcmp(msg->cmd, "PART"))
+	{
+		for(i=0;i<g_list_length(config->users);i++)
+		{
+			lp_user *user = g_list_nth_data(config->users, i);
+			if(!strcmp(user->login, msg->from))
+			{
+				user->identified = 0;
+				break;
+			}
+		}
+	}
 	lp_msg_free(msg);
 	return TRUE;
 }
