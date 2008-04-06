@@ -144,6 +144,30 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	return TRUE;
 }
 
+int lp_connect(lp_server *server)
+{
+	struct hostent host;
+	struct sockaddr_in conn;
+
+	lp_resolve(server->address, &host);
+	server->sock = lp_create_sock();
+	conn.sin_family = AF_INET;
+	conn.sin_port = htons(server->port);
+	conn.sin_addr = *((struct in_addr *) host.h_addr);
+	memset(&(conn.sin_zero), 0, 8);
+	if(connect(server->sock, (struct sockaddr *)&conn, sizeof(struct sockaddr))<0)
+	{
+		perror("connect");
+		return -1;
+	}
+	server->chan = g_io_channel_unix_new(server->sock);
+	g_io_add_watch(server->chan, G_IO_IN, lp_handler, (gpointer)server);
+	g_idle_add(lp_ping, (gpointer)server);
+	lp_send(server, "nick %s", server->nick);
+	lp_send(server, "user %s 8 * :%s", server->username, server->realname);
+	return 0;
+}
+
 int main()
 {
 	int i;
@@ -152,28 +176,7 @@ int main()
 	parseConfig("config.xml");
 
 	for(i=0;i<g_list_length(servers);i++)
-	{
-		struct hostent host;
-		struct sockaddr_in conn;
-
-		lp_server *server = g_list_nth_data(servers, i);
-		lp_resolve(server->address, &host);
-		server->sock = lp_create_sock();
-		conn.sin_family = AF_INET;
-		conn.sin_port = htons(6667);
-		conn.sin_addr = *((struct in_addr *) host.h_addr);
-		memset(&(conn.sin_zero), 0, 8);
-		if(connect(server->sock, (struct sockaddr *)&conn, sizeof(struct sockaddr))<0)
-		{
-			perror("connect");
-			return 1;
-		}
-		server->chan = g_io_channel_unix_new(server->sock);
-		g_io_add_watch(server->chan, G_IO_IN, lp_handler, (gpointer)server);
-		g_idle_add(lp_ping, (gpointer)server);
-		lp_send(server, "nick %s", server->nick);
-		lp_send(server, "user %s 8 * :%s", server->username, server->realname);
-	}
+		lp_connect(g_list_nth_data(servers, i));
 	// debug
 	lp_server *kbd = g_new0(struct __lp_server, 1);
 	kbd->chan = g_io_channel_unix_new(STDIN_FILENO);
