@@ -69,10 +69,12 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	if(buf[i-2]=='\r')
 		i--;
 	buf[i-1] = '\0';
-	if(server->sock != STDIN_FILENO)
-		printf("%s\n", buf);
-	else
+	if(server->sock == STDIN_FILENO)
+	{
 		lp_send(NULL, buf);
+		return TRUE;
+	}
+	printf("%s\n", buf);
 	return TRUE;
 }
 
