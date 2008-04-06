@@ -179,6 +179,12 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	{
 		server->lastpong = time(NULL);
 	}
+	else if(!strcmp(msg->cmd, "PRIVMSG"))
+	{
+		if(!strncmp(server->nick, g_list_nth_data(msg->params, 0), strlen(server->nick)) &&
+				!strcmp("ping", g_list_nth_data(msg->params, 1)))
+			lp_send(server, "privmsg %s :pong", msg->to);
+	}
 	lp_msg_free(msg);
 	return TRUE;
 }
