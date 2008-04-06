@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <servers>
 	<server>
-		<chatname>freenode</chatname>
+		<chatname>unreal</chatname>
 		<address>localhost</address>
 		<port>6667</port>
 		<nick>lpbot</nick>
 		<username>lpuser</username>
 		<realname>Lp Bot</realname>
-		<channel>#lpbot</channel>
+		<channel>#lpbot_local</channel>
+		<!--<channel>#lpbot_local2</channel>-->
 	</server>
+	<!--<server>
+		<chatname>freenode</chatname>
+		<address>irc.freenode.net</address>
+		<port>6667</port>
+		<nick>lpbot</nick>
+		<username>lpuser</username>
+		<realname>Lp Bot</realname>
+		<channel>#lpbot</channel>
+	</server>-->
 </servers>
