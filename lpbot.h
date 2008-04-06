@@ -23,10 +23,12 @@ typedef struct __lp_msg
 	GList *params;
 } lp_msg;
 
-extern GList *servers;
+extern GList *servers, *users;
 int lp_disconnect(lp_server *server, char *msg);
 int lp_reconnect(lp_server *server, char *msg);
 
 #define IRC_LINE_LENGHT 512
 #define sockerr_again() (errno == EINPROGRESS || errno == EINTR)
 
+#include "config.h"
+#include "users.h"

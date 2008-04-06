@@ -12,7 +12,7 @@
 #include "lpbot.h"
 #include "config.h"
 
-GList *servers;
+GList *servers, *users;
 
 int lp_resolve(char *server, struct hostent *host)
 {
@@ -226,6 +226,7 @@ int main()
 	GMainLoop *loop;
 
 	parseConfig("config.xml");
+	parseUsers("users.xml");
 
 	for(i=0;i<g_list_length(servers);i++)
 		lp_connect(g_list_nth_data(servers, i));

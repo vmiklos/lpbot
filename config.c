@@ -4,7 +4,6 @@
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <glib.h>
-#include <pacman.h>
 
 #include "lpbot.h"
 
@@ -12,7 +11,7 @@ static int parseServer(xmlDoc *doc, xmlNode *cur)
 {
 	xmlChar *key;
 	cur = cur->xmlChildrenNode;
-	lp_server *server = g_new0(struct __lp_server, 1);
+	lp_server *server = g_new0(lp_server, 1);
 
 
 	while (cur)
