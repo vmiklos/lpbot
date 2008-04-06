@@ -1,0 +1,1 @@
+int parseConfig(char *docname);
