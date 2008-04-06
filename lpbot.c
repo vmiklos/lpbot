@@ -237,7 +237,7 @@ int main()
 	GMainLoop *loop;
 	config = g_new0(lp_config, 1);
 
-	parseConfig("servers.xml");
+	parseServers("servers.xml");
 	parseUsers("users.xml");
 
 	for(i=0;i<g_list_length(config->servers);i++)

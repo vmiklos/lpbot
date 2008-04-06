@@ -1,18 +1,5 @@
-typedef struct __lp_server
-{
-	char *chatname;
-	char *address;
-	int port;
-	char *nick;
-	char *username;
-	char *realname;
-	GList *channels;
-
-	GIOChannel *chan;
-	int sock;
-
-	int lastpong;
-} lp_server;
+#include "servers.h"
+#include "users.h"
 
 typedef struct __lp_msg
 {
@@ -23,19 +10,16 @@ typedef struct __lp_msg
 	GList *params;
 } lp_msg;
 
-int lp_disconnect(lp_server *server, char *msg);
-int lp_reconnect(lp_server *server, char *msg);
-
-#define IRC_LINE_LENGHT 512
-#define sockerr_again() (errno == EINPROGRESS || errno == EINTR)
-
-#include "servers.h"
-#include "users.h"
-
 typedef struct __lp_config
 {
 	GList *servers;
 	GList *users;
 } lp_config;
+
+int lp_disconnect(lp_server *server, char *msg);
+int lp_reconnect(lp_server *server, char *msg);
+
+#define IRC_LINE_LENGHT 512
+#define sockerr_again() (errno == EINPROGRESS || errno == EINTR)
 
 extern lp_config *config;

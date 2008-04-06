@@ -1,3 +1,17 @@
+typedef struct __lp_server
+{
+	char *chatname;
+	char *address;
+	int port;
+	char *nick;
+	char *username;
+	char *realname;
+	GList *channels;
+
+	GIOChannel *chan;
+	int sock;
+
+	int lastpong;
+} lp_server;
+
 int parseServers(char *docname);
-// later probably we want to do more than just servers
-#define parseConfig parseServers
