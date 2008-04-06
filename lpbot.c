@@ -8,6 +8,8 @@
 
 #define IRC_LINE_LENGHT 512
 
+int server_sock;
+
 int lp_resolve(char *server, struct hostent *host)
 {
 	struct hostent *ptr;
@@ -31,7 +33,9 @@ int lp_create_sock()
 
 int lp_send(int sock, char *msg)
 {
-	return write(sock, msg, strlen(msg));
+	char buf[IRC_LINE_LENGHT+1];
+	g_snprintf(buf, IRC_LINE_LENGHT, "%s\n", msg);
+	return write(sock, buf, strlen(buf));
 }
 
 int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
@@ -46,13 +50,19 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	{
 		if((len = read(sock, &c, 1))<=0)
 		{
-			perror("read");
+			if(len<0)
+				perror("read");
 			return FALSE;
 		}
 		buf[i++] = c;
 	}
-	buf[i-2] = '\0';
-	printf("got from server: '%s'\n", buf);
+	if(buf[i-2]=='\r')
+		i--;
+	buf[i-1] = '\0';
+	if(sock != STDIN_FILENO)
+		printf("%s\n", buf);
+	else
+		lp_send(server_sock, buf);
 	fflush(stdout);
 	return TRUE;
 }
@@ -63,11 +73,12 @@ int main()
 	int sock;
 	struct sockaddr_in conn;
 
-	GIOChannel* chan;
-	GMainLoop* loop;
+	GIOChannel *sock_chan, *kbd_chan;
+	GMainLoop *loop;
 
 	lp_resolve("localhost", &host);
 	sock = lp_create_sock();
+	server_sock = sock;
 	conn.sin_family = AF_INET;
 	conn.sin_port = htons(6667);
 	conn.sin_addr = *((struct in_addr *) host.h_addr);
@@ -77,8 +88,10 @@ int main()
 		perror("connect");
 		return 1;
 	}
-	chan = g_io_channel_unix_new(sock);
-	g_io_add_watch(chan, G_IO_IN, lp_handler, (gpointer)sock);
+	sock_chan = g_io_channel_unix_new(sock);
+	g_io_add_watch(sock_chan, G_IO_IN, lp_handler, (gpointer)sock);
+	kbd_chan = g_io_channel_unix_new(STDIN_FILENO);
+	g_io_add_watch(kbd_chan, G_IO_IN, lp_handler, (gpointer)STDIN_FILENO);
 	lp_send(sock, "nick lpbot\n");
 	lp_send(sock, "user lpbot 8 * :lpbot\n");
 
