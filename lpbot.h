@@ -10,6 +10,8 @@ typedef struct __lp_server
 
 	GIOChannel *chan;
 	int sock;
+
+	int lastpong;
 } lp_server;
 
 typedef struct __lp_msg
@@ -22,3 +24,4 @@ typedef struct __lp_msg
 } lp_msg;
 
 extern GList *servers;
+int lp_disconnect(lp_server *server, char *msg);

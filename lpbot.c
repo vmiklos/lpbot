@@ -41,6 +41,8 @@ int lp_send(lp_server* server, char *fmt, ...)
 
 	if(!server)
 		server = g_list_nth_data(servers, 0);
+	if(!server || server->sock<0)
+		return -1;
 
 	va_start(ap, fmt);
 	vsnprintf(buf, IRC_LINE_LENGHT-1, fmt, ap);
@@ -165,6 +167,15 @@ int lp_connect(lp_server *server)
 	g_idle_add(lp_ping, (gpointer)server);
 	lp_send(server, "nick %s", server->nick);
 	lp_send(server, "user %s 8 * :%s", server->username, server->realname);
+	return 0;
+}
+
+int lp_disconnect(lp_server *server, char *msg)
+{
+	lp_send(server, "quit :%s", msg);
+	close(server->sock);
+	server->sock = 0;
+	servers = g_list_remove(servers, server);
 	return 0;
 }
 
