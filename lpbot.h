@@ -23,7 +23,6 @@ typedef struct __lp_msg
 	GList *params;
 } lp_msg;
 
-extern GList *servers, *users;
 int lp_disconnect(lp_server *server, char *msg);
 int lp_reconnect(lp_server *server, char *msg);
 
@@ -32,3 +31,11 @@ int lp_reconnect(lp_server *server, char *msg);
 
 #include "config.h"
 #include "users.h"
+
+typedef struct __lp_config
+{
+	GList *servers;
+	GList *users;
+} lp_config;
+
+extern lp_config *config;

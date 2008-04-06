@@ -36,7 +36,7 @@ static int parseUser(xmlDoc *doc, xmlNode *cur)
 		xmlFree(key);
 		cur = cur->next;
 	}
-	users = g_list_append(users, user);
+	config->users = g_list_append(config->users, user);
 	return(0);
 }
 

@@ -34,7 +34,7 @@ static int parseServer(xmlDoc *doc, xmlNode *cur)
 		xmlFree(key);
 		cur = cur->next;
 	}
-	servers = g_list_append(servers, server);
+	config->servers = g_list_append(config->servers, server);
 	return(0);
 }
 

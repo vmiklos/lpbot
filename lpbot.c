@@ -12,7 +12,7 @@
 #include "lpbot.h"
 #include "config.h"
 
-GList *servers, *users;
+lp_config *config;
 
 int lp_resolve(char *server, struct hostent *host)
 {
@@ -42,7 +42,7 @@ int lp_send(lp_server* server, char *fmt, ...)
 	struct pollfd pfd[1];
 
 	if(!server)
-		server = g_list_nth_data(servers, 0);
+		server = g_list_nth_data(config->servers, 0);
 	if(!server || server->sock<0)
 		return -1;
 
@@ -222,7 +222,6 @@ int lp_disconnect(lp_server *server, char *msg)
 		lp_send(server, "quit :%s", msg);
 	close(server->sock);
 	server->sock = 0;
-	servers = g_list_remove(servers, server);
 	return 0;
 }
 
@@ -237,12 +236,13 @@ int main()
 {
 	int i;
 	GMainLoop *loop;
+	config = g_new0(lp_config, 1);
 
 	parseConfig("config.xml");
 	parseUsers("users.xml");
 
-	for(i=0;i<g_list_length(servers);i++)
-		lp_connect(g_list_nth_data(servers, i));
+	for(i=0;i<g_list_length(config->servers);i++)
+		lp_connect(g_list_nth_data(config->servers, i));
 	// debug
 	lp_server *kbd = g_new0(lp_server, 1);
 	kbd->chan = g_io_channel_unix_new(STDIN_FILENO);
