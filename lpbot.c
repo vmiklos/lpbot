@@ -253,8 +253,7 @@ int main()
 	GMainLoop *loop;
 	config = g_new0(lp_config, 1);
 
-	parseServers("servers.xml");
-	parseUsers("users.xml");
+	parseConfig("config.xml");
 
 	for(i=0;i<g_list_length(config->servers);i++)
 		lp_connect(g_list_nth_data(config->servers, i));

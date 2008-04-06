@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<servers>
+<config>
 	<server>
 		<chatname>unreal</chatname>
 		<address>localhost</address>
@@ -19,4 +19,11 @@
 		<realname>Lp Bot</realname>
 		<channel>#lpbot</channel>
 	</server>-->
-</servers>
+	<user>
+		<login>vmiklos</login>
+		<pass>0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33</pass>
+		<mask>vmiklos!vmiklos@localhost</mask>
+		<right_db>1</right_db>
+		<right_op>1</right_op>
+	</user>
+</config>

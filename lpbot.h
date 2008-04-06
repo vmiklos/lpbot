@@ -1,5 +1,7 @@
+#include <libxml/parser.h>
 #include "servers.h"
 #include "users.h"
+#include "config.h"
 
 typedef struct __lp_msg
 {

@@ -14,4 +14,4 @@ typedef struct __lp_server
 	int lastpong;
 } lp_server;
 
-int parseServers(char *docname);
+int parseServer(xmlDoc *doc, xmlNode *cur);
