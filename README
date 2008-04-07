@@ -65,4 +65,6 @@ My aim is to create an IRC bot, with the following minimal features:
   new entries on the configured channels from time to time (interval can
   be set via the `rss_interval` option).
 
+* the `remind` command will send your password to your email address.
+
 // vim: ft=asciidoc
