@@ -25,7 +25,7 @@ My aim is to create an IRC bot, with the following minimal features:
 * other extra nice features: RSS reader (announces the link of new
   entries to a given channel), sending forgotten password via e-mail.
 
-=== Papers
+=== Programs and papers
 
 * the IRC bot itself (`lpbot`), ran by the administrator
 
