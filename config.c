@@ -22,6 +22,8 @@ static int parseOptions(xmlDoc *doc, xmlNode *cur)
 			else if(!strcmp((char*)key, "services"))
 				config->ident_method = LP_IDENT_SERVICES;
 		}
+		else if ((!xmlStrcmp(cur->name, (const xmlChar *)"rss_interval")))
+			config->rss_interval = atoi((char*)key);
 		xmlFree(key);
 		cur = cur->next;
 	}
@@ -69,6 +71,11 @@ int parseConfig(char *docname)
 		else if((!xmlStrcmp(cur->name, (const xmlChar *)"user")))
 		{
 			if(parseUser(doc, cur)<0)
+				return -1;
+		}
+		else if((!xmlStrcmp(cur->name, (const xmlChar *)"rss")))
+		{
+			if(parseRss(doc, cur)<0)
 				return -1;
 		}
 		else if((!xmlStrcmp(cur->name, (const xmlChar *)"options")))

@@ -16,3 +16,4 @@ typedef struct __lp_server
 } lp_server;
 
 int parseServer(xmlDoc *doc, xmlNode *cur);
+lp_server *lp_find_server(char *chatname);

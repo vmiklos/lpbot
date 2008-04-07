@@ -142,6 +142,18 @@ int lp_ping(gpointer data)
 	return TRUE;
 }
 
+int lp_check_rss(gpointer data)
+{
+	int i;
+
+	for(i=0;i<g_list_length(config->rsslist);i++)
+	{
+		lp_rss *rss = g_list_nth_data(config->rsslist, i);
+		check_rss(rss);
+	}
+	return TRUE;
+}
+
 char *lp_to(lp_server *server, lp_msg *msg)
 {
 	// if the msg is from a channel, then returns the channel, if
@@ -529,6 +541,7 @@ int main()
 	parseConfig("config.xml");
 	parseRecords("db.xml");
 	lp_serve();
+	g_timeout_add(config->rss_interval*1000, lp_check_rss, NULL);
 
 	for(i=0;i<g_list_length(config->servers);i++)
 		lp_connect(g_list_nth_data(config->servers, i));

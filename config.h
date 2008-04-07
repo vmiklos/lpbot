@@ -9,8 +9,10 @@ typedef struct __lp_config
 	GList *servers;
 	GList *users;
 	GList *records;
+	GList *rsslist;
 	int ident_method;
 	char* ident_to;
+	int rss_interval;
 } lp_config;
 
 int parseConfig(char *docname);
