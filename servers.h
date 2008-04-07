@@ -12,6 +12,7 @@ typedef struct __lp_server
 	int sock;
 
 	int lastpong;
+	int is_console;
 } lp_server;
 
 int parseServer(xmlDoc *doc, xmlNode *cur);

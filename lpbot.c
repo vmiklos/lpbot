@@ -335,6 +335,10 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 			lp_send(server, "whois %s", msg->from);
 		}
 	}
+	if(!strcmp("quit", g_list_nth_data(params, 0)) && server->is_console)
+	{
+		lp_disconnect(server, "bye");
+	}
 	return 0;
 }
 
@@ -442,8 +446,10 @@ int lp_connect(lp_server *server)
 
 int lp_disconnect(lp_server *server, char *msg)
 {
-	if(msg)
+	if(msg && !server->is_console)
 		lp_send(server, "quit :%s", msg);
+	if(server->is_console)
+		shutdown(server->sock, SHUT_RDWR);
 	close(server->sock);
 	server->sock = 0;
 	return 0;
@@ -456,6 +462,35 @@ int lp_reconnect(lp_server *server, char *msg)
 	return 0;
 }
 
+int lp_listen(GIOChannel *source, GIOCondition condition, gpointer data)
+{
+	int sock = (int)data;
+	lp_server *server = g_new0(lp_server, 1);
+	server->sock = accept(sock, NULL, NULL);
+	server->chan = g_io_channel_unix_new(server->sock);
+	server->nick = g_strdup("master");
+	server->is_console = 1;
+	g_io_add_watch(server->chan, G_IO_IN, lp_handler, (gpointer)server);
+	return TRUE;
+}
+
+int lp_serve()
+{
+	int sock = lp_create_sock();
+	int opt = 1;
+	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+	struct sockaddr_in conn;
+	memset(&conn, 0, sizeof(conn));
+	conn.sin_family = AF_INET;
+	conn.sin_port = htons(1100);
+	conn.sin_addr.s_addr = htonl(INADDR_ANY);
+	bind(sock,(struct sockaddr*) &conn, sizeof(conn));
+	listen(sock, 1);
+	GIOChannel *chan = g_io_channel_unix_new(sock);
+	g_io_add_watch(chan, G_IO_IN, lp_listen, (gpointer)sock);
+	return 0;
+}
+
 int main()
 {
 	int i;
@@ -464,6 +499,7 @@ int main()
 
 	parseConfig("config.xml");
 	parseRecords("db.xml");
+	lp_serve();
 
 	for(i=0;i<g_list_length(config->servers);i++)
 		lp_connect(g_list_nth_data(config->servers, i));
