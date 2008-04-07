@@ -55,4 +55,7 @@ My aim is to create an IRC bot, with the following minimal features:
   existing record, `db put title text here` to insert a new record or
   update an existing one and `db del title` to delete a record.
 
+* the bot binds to port 1100 and you can access the commands via telnet
+  as well (the syntax is `<login> PRIVMSG master <command>`)
+
 // vim: ft=asciidoc
