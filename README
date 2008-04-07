@@ -51,4 +51,8 @@ My aim is to create an IRC bot, with the following minimal features:
   services, or requires one password parameter if configured to use
   password authentication
 
+* `db` command, it has 3 subcommands: `db get title` to query an
+  existing record, `db put title text here` to insert a new record or
+  update an existing one and `db del title` to delete a record.
+
 // vim: ft=asciidoc
