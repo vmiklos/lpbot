@@ -3,6 +3,7 @@
 #include <sys/utsname.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
+#include <libxml/xmlwriter.h>
 #include <glib.h>
 
 #include "lpbot.h"
@@ -90,4 +91,43 @@ int parseRecords(char *docname)
 	}
 	xmlFreeDoc(doc);
 	return(0);
+}
+
+int saveRecords(char *docname)
+{
+	int i, j;
+	xmlTextWriterPtr writer;
+
+	writer = xmlNewTextWriterFilename("db.xml", 0);
+	xmlTextWriterSetIndentString(writer, BAD_CAST "\t");
+	xmlTextWriterStartDocument(writer, NULL, "UTF-8", NULL);
+	xmlTextWriterStartElement(writer, BAD_CAST "records");
+	for(i=0;i<g_list_length(config->records);i++)
+	{
+		lp_record *record = g_list_nth_data(config->records, i);
+
+		xmlTextWriterSetIndent(writer, 1);
+		xmlTextWriterStartElement(writer, BAD_CAST "record");
+		xmlTextWriterSetIndent(writer, 2);
+		xmlTextWriterWriteFormatElement(writer, BAD_CAST "name", "%s", record->name);
+		for(j=0;j<g_list_length(record->versions);j++)
+		{
+			lp_record_ver *ver = g_list_nth_data(record->versions, i);
+
+			xmlTextWriterStartElement(writer, BAD_CAST "version");
+			xmlTextWriterSetIndent(writer, 3);
+			xmlTextWriterWriteFormatElement(writer, BAD_CAST "date", "%d", ver->date);
+			xmlTextWriterWriteFormatElement(writer, BAD_CAST "author", "%s", ver->author);
+			xmlTextWriterWriteFormatElement(writer, BAD_CAST "content", "%d", ver->content);
+			xmlTextWriterSetIndent(writer, 2);
+			xmlTextWriterEndElement(writer);
+		}
+		xmlTextWriterSetIndent(writer, 1);
+		xmlTextWriterEndElement(writer);
+	}
+	xmlTextWriterSetIndent(writer, 0);
+	xmlTextWriterEndElement(writer);
+	xmlTextWriterEndDocument(writer);
+	xmlFreeTextWriter(writer);
+	return 0;
 }

@@ -12,3 +12,4 @@ typedef struct __lp_record
 } lp_record;
 
 int parseRecords(char *docname);
+int saveRecords(char *docname);
