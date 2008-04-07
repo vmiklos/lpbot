@@ -61,4 +61,8 @@ My aim is to create an IRC bot, with the following minimal features:
 * `connect` command to connect to a new server:
   `connect test localhost 6667 lpbot2 #lpbot_local`
 
+* you can configure rss feeds in the config and the bot announces the
+  new entries on the configured channels from time to time (interval can
+  be set via the `rss_interval` option).
+
 // vim: ft=asciidoc
