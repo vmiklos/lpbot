@@ -93,7 +93,9 @@ lp_msg *lp_parse(char *str)
 	if(msg->from[0] == ':')
 		msg->from++;
 
+#ifdef DEBUG
 	printf("parsing message '%s'\n", msg->raw);
+#endif
 
 	p = strchr(msg->raw, ' ');
 	// every irc msg should have a from/to/cmd
@@ -125,7 +127,9 @@ lp_msg *lp_parse(char *str)
 	p = strchr(msg->from, '!');
 	if(p)
 		*p = '\0';
+#ifdef DEBUG
 	lp_dump_msg(msg);
+#endif
 	return msg;
 }
 

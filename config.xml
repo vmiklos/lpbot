@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
+	<!-- general options -->
 	<options>
 		<ident_method>pass</ident_method>
 		<!--<ident_method>services</ident_method>-->
 		<rss_interval>180</rss_interval>
 	</options>
+	<!-- server entries, multiple ones are allowed -->
 	<server>
 		<chatname>unreal</chatname>
 		<address>localhost</address>
@@ -24,12 +26,14 @@
 		<realname>Lp Bot</realname>
 		<channel>#lpbot</channel>
 	</server>-->
+	<!-- rss entries, multiple ones are allowed -->
 	<rss>
 		<name>test</name>
 		<url>http://frugalware.org/~vmiklos/rss/test/test.py</url>
 		<server>unreal</server>
 		<channel>#lpbot_local</channel>
 	</rss>
+	<!-- user entries, multiple ones are allowed -->
 	<user>
 		<login>vmiklos</login>
 		<email>vmiklos@vmiklos.hu</email>

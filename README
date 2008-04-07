@@ -38,6 +38,29 @@ My aim is to create an IRC bot, with the following minimal features:
 
 * developer guide
 
+== Administrator guide
+
+`lpbot` has been written in C, using the following external libraries:
+
+* gobject-2.0 (http://library.gnome.org/devel/gobject/stable/[homepage])
+* libxml-2.0 (http://xmlsoft.org/[homepage])
+* curl-7.18 (http://curl.haxx.se/[homepage])
+* libmrss-0.19.1 (http://www.autistici.org/bakunin/libmrss/doc/[homepage])
+
+You need `make` and `gcc` installed, then you can build it using the
+
+----
+$ make
+----
+
+command.
+
+If you want to monitor the traffic of the bot, add `-DDEBUG` to `CFLAGS`
+in `Makefile`.
+
+Now all you need is to customize `config.xml`, the setting names are
+pretty self-explaining.
+
 == User guide
 
 The following features are available for a user:
