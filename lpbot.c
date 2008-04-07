@@ -254,6 +254,38 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 			else
 				lp_send(server, "privmsg %s :identify first to alter the db", to);
 		}
+		else if(!strcmp("del", g_list_nth_data(params, 1)) && g_list_length(params) == 3)
+		{
+			if(lp_identified(msg->from))
+			{
+				lp_user *user = lp_find_user(msg->from);
+				if(user->rights & LP_RIGHT_DB)
+				{
+					lp_record *record;
+					for(i=0;i<g_list_length(config->records);i++)
+					{
+						record = g_list_nth_data(config->records, i);
+						if(!strcmp(record->name, g_list_nth_data(params, 2)))
+						{
+							found = 1;
+							break;
+						}
+					}
+					if(!found)
+						lp_send(server, "privmsg %s :no such record", to);
+					else
+					{
+						config->records = g_list_remove(config->records, record);
+						saveRecords("db.xml");
+						lp_send(server, "privmsg %s :okay, deleted", to);
+					}
+				}
+				else
+					lp_send(server, "privmsg %s :you don't have rights to alter the db", to);
+			}
+			else
+				lp_send(server, "privmsg %s :identify first to alter the db", to);
+		}
 	}
 	if(!strcmp("whoami", g_list_nth_data(params, 0)))
 	{
