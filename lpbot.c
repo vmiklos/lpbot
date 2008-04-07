@@ -240,6 +240,10 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 					ver->content = g_string_new(g_strdup(g_list_nth_data(params, 3)));
 					record->versions = g_list_insert(record->versions, ver, 0);
 					saveRecords("db.xml");
+					if(found)
+						lp_send(server, "privmsg %s :okay, updated", to);
+					else
+						lp_send(server, "privmsg %s :okay, inserted", to);
 				}
 				else
 					lp_send(server, "privmsg %s :you don't have rights to alter the db", to);
