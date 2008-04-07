@@ -1,5 +1,6 @@
 *.o
 lpbot
+lpbotctl
 .*.swp
 Changelog
 HEADER.html
