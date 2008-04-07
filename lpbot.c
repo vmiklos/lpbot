@@ -40,8 +40,6 @@ int lp_send(lp_server* server, char *fmt, ...)
 	char buf[IRC_LINE_LENGHT+1];
 	struct pollfd pfd[1];
 
-	if(!server)
-		server = g_list_nth_data(config->servers, 0);
 	if(!server || server->sock<0)
 		return -1;
 
@@ -360,11 +358,6 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	if(buf[i-2]=='\r')
 		i--;
 	buf[i-1] = '\0';
-	if(server->sock == STDIN_FILENO)
-	{
-		lp_send(NULL, buf);
-		return TRUE;
-	}
 	msg = lp_parse(buf);
 	// probably a ping which is handled by the idle handler or so
 	if(!msg)
@@ -474,11 +467,6 @@ int main()
 
 	for(i=0;i<g_list_length(config->servers);i++)
 		lp_connect(g_list_nth_data(config->servers, i));
-	// debug
-	lp_server *kbd = g_new0(lp_server, 1);
-	kbd->chan = g_io_channel_unix_new(STDIN_FILENO);
-	kbd->sock = STDIN_FILENO;
-	g_io_add_watch(kbd->chan, G_IO_IN, lp_handler, (gpointer)kbd);
 
 	loop = g_main_loop_new(NULL, TRUE);
 	g_main_loop_run(loop);
