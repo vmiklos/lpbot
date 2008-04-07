@@ -4,6 +4,7 @@
 typedef struct __lp_user
 {
 	char *login;
+	char *email;
 	char *pass;
 	unsigned int rights;
 	int identified;

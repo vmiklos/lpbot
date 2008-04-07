@@ -169,14 +169,9 @@ char *lp_to(lp_server *server, lp_msg *msg)
 
 int lp_identified(char *who)
 {
-	int i;
-
-	for(i=0;i<g_list_length(config->users);i++)
-	{
-		lp_user *user = g_list_nth_data(config->users, i);
-		if(!strcmp(user->login, who) && user->identified)
-			return 1;
-	}
+	lp_user *user = lp_find_user(who);
+	if(user && user->identified)
+		return 1;
 	return 0;
 }
 
@@ -187,7 +182,7 @@ lp_user *lp_find_user(char *who)
 	for(i=0;i<g_list_length(config->users);i++)
 	{
 		lp_user *user = g_list_nth_data(config->users, i);
-		if(!strcmp(user->login, who) && user->identified)
+		if(!strcmp(user->login, who))
 			return user;
 	}
 	return NULL;
@@ -321,6 +316,17 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 			lp_send(server, "privmsg %s :i know who you are, %s.",
 					to, msg->from);
 	}
+	if(!strcmp("remind", g_list_nth_data(params, 0)))
+	{
+		lp_user *user = lp_find_user(msg->from);
+		if(user)
+		{
+			remind(user);
+			lp_send(server, "privmsg %s :okay, reminder sent", to);
+		}
+		else
+			lp_send(server, "privmsg %s :no such user, so i don't know the pass!", to);
+	}
 	if(!strcmp("identify", g_list_nth_data(params, 0)))
 	{
 		if(config->ident_method == LP_IDENT_PASS)
@@ -357,7 +363,7 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 	if(!strcmp("connect", g_list_nth_data(params, 0)))
 	{
 		lp_user *user = lp_find_user(msg->from);
-		if(user)
+		if(user && user->identified)
 		{
 			if(user->rights & LP_RIGHT_OP && g_list_length(params) >5)
 			{
@@ -489,8 +495,7 @@ int lp_disconnect(lp_server *server, char *msg)
 {
 	if(msg)
 		lp_send(server, "quit :%s", msg);
-	if(server->is_console)
-		shutdown(server->sock, SHUT_RDWR);
+	shutdown(server->sock, SHUT_RDWR);
 	close(server->sock);
 	server->sock = 0;
 	return 0;

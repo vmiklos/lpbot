@@ -5,7 +5,7 @@ LDFLAGS += $(shell pkg-config --libs libxml-2.0)
 LDFLAGS += $(shell curl-config --libs)
 LDFLAGS += $(shell pkg-config --libs mrss)
 
-lpbot: lpbot.o servers.o users.o config.o db.o rss.o getdate.o
+lpbot: lpbot.o servers.o users.o config.o db.o rss.o getdate.o remind.o
 
 -include .depend
 

@@ -32,6 +32,7 @@
 	</rss>
 	<user>
 		<login>vmiklos</login>
+		<email>vmiklos@vmiklos.hu</email>
 		<pass>foo</pass>
 		<right_db>1</right_db>
 		<right_op>1</right_op>
