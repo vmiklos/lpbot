@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <errno.h>
+#include <pwd.h>
 #include <glib.h>
 
 #include "lpbot.h"
@@ -47,7 +48,7 @@ int srv_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 
 int kbd_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 {
-	char c = 0, buf[IRC_LINE_LENGHT+1] = "";
+	char c = 0, buf[IRC_LINE_LENGHT+1] = "", *user = (char*)data;
 	int i = 0, len;
 
 	while(c != '\n' && i < IRC_LINE_LENGHT)
@@ -63,25 +64,34 @@ int kbd_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	if(buf[i-2]=='\r')
 		i--;
 	buf[i-1] = '\0';
-	lp_send(server, buf);
+	lp_send(server, "%s PRIVMSG lpbot %s", user, buf);
 	return TRUE;
 }
 
 int main(int argv, char **argc)
 {
 	GMainLoop *loop;
+	struct passwd *p;
+	char *user;
 	server = g_new0(lp_server, 1);
 	kbd = g_new0(lp_server, 1);
 
 	// option parsing
 	if(argv<2)
+	{
+		p = getpwuid(getuid());
+		user = g_strdup(p->pw_name);
+	}
+	else
+		user = g_strdup(argc[1]);
+	if(argv<3)
 		server->address = g_strdup(LP_HOST);
 	else
-		server->address = g_strdup(argc[1]);
-	if(argv<3)
+		server->address = g_strdup(argc[2]);
+	if(argv<4)
 		server->port = LP_PORT;
 	else
-		server->port = atoi(argc[2]);
+		server->port = atoi(argc[3]);
 
 	kbd->sock = STDIN_FILENO;
 	kbd->chan = g_io_channel_unix_new(kbd->sock);
@@ -95,7 +105,7 @@ int main(int argv, char **argc)
 	else
 		printf("done!\n");
 	g_io_add_watch(server->chan, G_IO_IN, srv_handler, NULL);
-	g_io_add_watch(kbd->chan, G_IO_IN, kbd_handler, NULL);
+	g_io_add_watch(kbd->chan, G_IO_IN, kbd_handler, user);
 
 	loop = g_main_loop_new(NULL, TRUE);
 	g_main_loop_run(loop);
