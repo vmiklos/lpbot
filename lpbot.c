@@ -1,7 +1,5 @@
 #include "lpbot.h"
 
-lp_config *config;
-
 int main()
 {
 	int i;

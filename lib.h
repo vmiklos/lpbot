@@ -19,3 +19,5 @@ int lp_serve();
 
 #define IRC_LINE_LENGHT 512
 #define sockerr_again() (errno == EINPROGRESS || errno == EINTR)
+
+extern lp_config *config;

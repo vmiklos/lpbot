@@ -9,5 +9,3 @@
 #include "rss.h"
 #include "remind.h"
 #include "lib.h"
-
-extern lp_config *config;

@@ -5,9 +5,13 @@ LDFLAGS += $(shell pkg-config --libs libxml-2.0)
 LDFLAGS += $(shell curl-config --libs)
 LDFLAGS += $(shell pkg-config --libs mrss)
 
+OBJS = servers.o users.o config.o db.o rss.o getdate.o remind.o lib.o
+
 all: lpbot lpbotctl
 
-lpbot: lpbot.o servers.o users.o config.o db.o rss.o getdate.o remind.o lib.o
+lpbot: lpbot.o $(OBJS)
+
+lpbotctl: lpbotctl.o $(OBJS)
 
 -include .depend
 

@@ -11,9 +11,13 @@
 
 #include "lpbot.h"
 
+lp_config *config;
+
 int lp_resolve(char *server, struct hostent *host)
 {
 	struct hostent *ptr;
+	if(!server)
+		return -1;
 	if (!(ptr = gethostbyname(server)))
 	{
 		perror("gethostbyname");
@@ -44,19 +48,24 @@ int lp_send(lp_server* server, char *fmt, ...)
 	va_start(ap, fmt);
 	vsnprintf(buf, IRC_LINE_LENGHT-1, fmt, ap);
 	va_end(ap);
+#ifdef DEBUG
 	printf("sending message '%s'\n", buf);
+#endif
 	buf[strlen(buf)+1] = '\0';
 	buf[strlen(buf)] = '\n';
 
 	// check if we can write to avoid a sigpipe
-	pfd[0].fd = server->sock;
-	pfd[0].events = POLLOUT;
-
-	poll(pfd, 1, 1000);
-	if(pfd[0].revents & POLLHUP)
+	if(server->sock != STDIN_FILENO)
 	{
-		lp_reconnect(server, NULL);
-		return FALSE;
+		pfd[0].fd = server->sock;
+		pfd[0].events = POLLOUT;
+
+		poll(pfd, 1, 1000);
+		if(pfd[0].revents & POLLHUP)
+		{
+			lp_reconnect(server, NULL);
+			return FALSE;
+		}
 	}
 	return write(server->sock, buf, strlen(buf));
 }
@@ -471,7 +480,8 @@ int lp_connect(lp_server *server)
 	struct hostent host;
 	struct sockaddr_in conn;
 
-	lp_resolve(server->address, &host);
+	if(lp_resolve(server->address, &host)<0)
+		return -1;
 	server->sock = lp_create_sock();
 	conn.sin_family = AF_INET;
 	conn.sin_port = htons(server->port);
@@ -483,9 +493,12 @@ int lp_connect(lp_server *server)
 		return -1;
 	}
 	server->chan = g_io_channel_unix_new(server->sock);
-	g_io_add_watch(server->chan, G_IO_IN, lp_handler, (gpointer)server);
-	lp_send(server, "nick %s", server->nick);
-	lp_send(server, "user %s 8 * :%s", server->username, server->realname);
+	if(server->nick)
+	{
+		g_io_add_watch(server->chan, G_IO_IN, lp_handler, (gpointer)server);
+		lp_send(server, "nick %s", server->nick);
+		lp_send(server, "user %s 8 * :%s", server->username, server->realname);
+	}
 	return 0;
 }
 
