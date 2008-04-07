@@ -28,7 +28,7 @@ int parseRss(xmlDoc *doc, xmlNode *cur)
 		cur = cur->next;
 	}
 	config->rsslist = g_list_append(config->rsslist, rss);
-	return(0);
+	return 0;
 }
 
 int check_rss(lp_rss *rss)
@@ -40,15 +40,15 @@ int check_rss(lp_rss *rss)
 	if ((ret=mrss_parse_url(rss->url, &data)))
 	{
 		fprintf (stderr, "MRSS return error: %s\n", mrss_strerror (ret));
-		return(1);
+		return -1;
 	}
 
 	item = data->item;
 	while (item)
 	{
 		// don't print any item for the first time
-		/*if(rss->lastupd==0)
-			break;*/
+		if(rss->lastupd==0)
+			break;
 		if(get_date(item->pubDate, NULL)>rss->lastupd)
 		{
 			lp_send(rss->server, "privmsg %s :14%s7 %s3 %s\n",
@@ -58,5 +58,5 @@ int check_rss(lp_rss *rss)
 	}
 	rss->lastupd=get_date(data->item->pubDate, NULL);
 	mrss_free (data);
-	return(0);
+	return 0;
 }

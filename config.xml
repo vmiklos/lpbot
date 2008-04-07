@@ -3,7 +3,7 @@
 	<options>
 		<ident_method>pass</ident_method>
 		<!--<ident_method>services</ident_method>-->
-		<rss_interval>10</rss_interval>
+		<rss_interval>180</rss_interval>
 	</options>
 	<server>
 		<chatname>unreal</chatname>
