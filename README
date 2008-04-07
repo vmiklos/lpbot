@@ -58,4 +58,7 @@ My aim is to create an IRC bot, with the following minimal features:
 * the bot binds to port 1100 and you can access the commands via telnet
   as well (the syntax is `<login> PRIVMSG lpbot <command>`)
 
+* `connect` command to connect to a new server:
+  `connect test localhost 6667 lpbot2 #lpbot_local`
+
 // vim: ft=asciidoc

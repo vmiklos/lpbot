@@ -30,6 +30,7 @@ typedef struct __lp_config
 
 int lp_disconnect(lp_server *server, char *msg);
 int lp_reconnect(lp_server *server, char *msg);
+int lp_connect(lp_server *server);
 
 #define IRC_LINE_LENGHT 512
 #define sockerr_again() (errno == EINPROGRESS || errno == EINTR)

@@ -338,8 +338,35 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 	if(!strcmp("quit", g_list_nth_data(params, 0)) && server->is_console)
 	{
 		lp_user *user = lp_find_user(msg->from);
-		user->identified = 0;
+		if(user)
+			user->identified = 0;
 		lp_disconnect(server, "bye");
+	}
+	if(!strcmp("connect", g_list_nth_data(params, 0)))
+	{
+		lp_user *user = lp_find_user(msg->from);
+		if(user)
+		{
+			if(user->rights & LP_RIGHT_OP && g_list_length(params) >5)
+			{
+				lp_server *new = g_new0(lp_server, 1);
+				new->chatname = g_strdup(g_list_nth_data(params, 1));
+				new->address = g_strdup(g_list_nth_data(params, 2));
+				new->port = atoi(g_list_nth_data(params, 3));
+				new->nick = g_strdup(g_list_nth_data(params, 4));
+				new->username = g_strdup(g_list_nth_data(params, 4));
+				new->realname = g_strdup(g_list_nth_data(params, 4));
+				for(i=5;i<g_list_length(params);i++)
+					new->channels = g_list_append(new->channels, g_strdup(g_list_nth_data(params, i)));
+				config->servers = g_list_append(config->servers, new);
+				lp_connect(new);
+				lp_send(server, "privmsg %s :ok, connected", to);
+			}
+			else
+				lp_send(server, "privmsg %s :you don't have rights to alter the db", to);
+		}
+		else
+			lp_send(server, "privmsg %s :identify first to alter the db", to);
 	}
 	return 0;
 }
