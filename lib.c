@@ -366,6 +366,7 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 		if(user)
 			user->identified = 0;
 		lp_disconnect(server, "bye");
+		return FALSE;
 	}
 	if(!strcmp("connect", g_list_nth_data(params, 0)))
 	{
@@ -393,7 +394,7 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 		else
 			lp_send(server, "privmsg %s :identify first to alter the db", to);
 	}
-	return 0;
+	return TRUE;
 }
 
 int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
@@ -454,10 +455,10 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	{
 		if(!strncmp(server->nick, g_list_nth_data(msg->params, 0), strlen(server->nick)))
 			// highlight
-			lp_handle_command(server, msg, g_list_next(msg->params));
+			return lp_handle_command(server, msg, g_list_next(msg->params));
 		else if(!strncmp(server->nick, msg->to, strlen(server->nick)))
 			// query
-			lp_handle_command(server, msg, msg->params);
+			return lp_handle_command(server, msg, msg->params);
 	}
 	else if(!strcmp(msg->cmd, "QUIT") || !strcmp(msg->cmd, "PART"))
 	{
