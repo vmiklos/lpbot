@@ -192,6 +192,24 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 	// help, etc
 	if(!strcmp("ping", g_list_nth_data(params, 0)))
 		lp_send(server, "privmsg %s :pong", to);
+	if(!strcmp("eval", g_list_nth_data(params, 0)))
+	{
+		if(lp_identified(msg->from))
+		{
+			lp_user *user = lp_find_user(msg->from);
+			if(user->rights & LP_RIGHT_OP && g_list_length(params) >1)
+			{
+				GString *cmd = g_string_new(g_list_nth_data(params, 1));
+				for(i=2;i<g_list_length(params);i++)
+					g_string_append_printf(cmd, " %s", (char*)g_list_nth_data(params, i));
+				lp_send(server, cmd->str);
+			}
+			else
+				lp_send(server, "privmsg %s :you don't have rights to alter the db", to);
+		}
+		else
+			lp_send(server, "privmsg %s :identify first to control the bot", to);
+	}
 	if(!strcmp("db", g_list_nth_data(params, 0)))
 	{
 		int found = 0;
