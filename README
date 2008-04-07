@@ -40,6 +40,8 @@ My aim is to create an IRC bot, with the following minimal features:
 
 == User guide
 
+The following features are available for a user:
+
 * automatic parallel connect to multiple servers
 * automatic join to multiple channels, if the connect was successful
 * automatic reconnect on network error (ping timeout, read/write error)
