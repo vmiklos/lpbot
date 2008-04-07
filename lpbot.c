@@ -179,6 +179,26 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 	// help, etc
 	if(!strcmp("ping", g_list_nth_data(params, 0)))
 		lp_send(server, "privmsg %s :pong", to);
+	if(!strcmp("db", g_list_nth_data(params, 0)))
+	{
+		int found = 0;
+		if(!strcmp("get", g_list_nth_data(params, 1)) && g_list_length(params) == 3)
+		{
+			for(i=0;i<g_list_length(config->records);i++)
+			{
+				lp_record *record = g_list_nth_data(config->records, i);
+				if(!strcmp(record->name, g_list_nth_data(params, 2)))
+				{
+					lp_record_ver *ver = g_list_nth_data(record->versions, 0);
+					lp_send(server, "privmsg %s :%s", to, ver->content);
+					found = 1;
+					break;
+				}
+			}
+			if(!found)
+				lp_send(server, "privmsg %s :no such record", to);
+		}
+	}
 	if(!strcmp("whoami", g_list_nth_data(params, 0)))
 	{
 		if(lp_identified(msg->from))
