@@ -30,7 +30,7 @@ My aim is to create an IRC bot, with the following minimal features:
 * the IRC bot itself (`lpbot`), ran by the administrator
 
 * the utility controller program (`lpbotctl`), run by the users with
-  sufficent privileges
+  sufficient privileges
 
 * administrator guide
 
@@ -38,7 +38,7 @@ My aim is to create an IRC bot, with the following minimal features:
 
 * developer guide
 
-== Implemented features
+== User guide
 
 * automatic parallel connect to multiple servers
 * automatic join to multiple channels, if the connect was successful
@@ -66,5 +66,15 @@ My aim is to create an IRC bot, with the following minimal features:
   be set via the `rss_interval` option).
 
 * the `remind` command will send your password to your email address.
+
+* the `lpbotctl` utility can be used to control the bot once it is
+  disconnected from all servers. usage: `lpbotctl [user] [host] [port]`.
+  it defaults to the current system user name, localhost and 1100,
+  respectively.
+
+* there are few commands in addition to the ones which were described in
+  the specification: the `ping` command replies with a `pong`, and the
+  `eval <command>` parameter is available for administrators to make the
+  bot execute any IRC command.
 
 // vim: ft=asciidoc
