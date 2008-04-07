@@ -470,7 +470,7 @@ int lp_listen(GIOChannel *source, GIOCondition condition, gpointer data)
 	lp_server *server = g_new0(lp_server, 1);
 	server->sock = accept(sock, NULL, NULL);
 	server->chan = g_io_channel_unix_new(server->sock);
-	server->nick = g_strdup("master");
+	server->nick = g_strdup("lpbot");
 	server->is_console = 1;
 	g_io_add_watch(server->chan, G_IO_IN, lp_handler, (gpointer)server);
 	return TRUE;
