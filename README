@@ -7,17 +7,17 @@ Miklos Vajna <vmiklos@vmiklos.hu>
 
 My aim is to create an IRC bot, with the following minimal features:
 
-* automatic connect pararelly to multiple servers, and to multiple
+* automatic parallel connections to multiple servers, and to multiple
   channels within a server, automatic reconnect on network errors
 
 * authentication of users (with password and/or using services available
   on the network)
 
-* implementation of a simple wiki-like database, users with sufficent
-  privileges can create records (storing creation and moficiation time
+* implementation of a simple wiki-like database, users with sufficient
+  privileges can create records (storing creation and modification time
   for each record, storing old versions as well)
 
-* controlling the bot via a tcp port: users with sufficent privileges
+* controlling the bot via a tcp port: users with sufficient privileges
   can connect to the bot using a utility program and can control it to
   execute given commands (for example connect to a new server if the bot
   is not connected to any server)
@@ -40,7 +40,7 @@ My aim is to create an IRC bot, with the following minimal features:
 
 == Implemented features
 
-* automatic connect to multiple servers, paralelly
+* automatic parallel connect to multiple servers
 * automatic join to multiple channels, if the connect was successful
 * automatic reconnect on network error (ping timeout, read/write error)
 
