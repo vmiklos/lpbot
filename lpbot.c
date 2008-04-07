@@ -238,6 +238,9 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 					ver->date = time(NULL);
 					ver->author = g_strdup(msg->from);
 					ver->content = g_string_new(g_strdup(g_list_nth_data(params, 3)));
+					for(i=4;i<g_list_length(params);i++)
+						g_string_append_printf(ver->content, " %s",
+								(char*)g_list_nth_data(params, i));
 					record->versions = g_list_insert(record->versions, ver, 0);
 					saveRecords("db.xml");
 					if(found)
