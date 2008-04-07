@@ -2,6 +2,7 @@
 #include "servers.h"
 #include "users.h"
 #include "config.h"
+#include "db.h"
 
 typedef struct __lp_msg
 {
@@ -22,6 +23,7 @@ typedef struct __lp_config
 {
 	GList *servers;
 	GList *users;
+	GList *records;
 	int ident_method;
 	char* ident_to;
 } lp_config;
