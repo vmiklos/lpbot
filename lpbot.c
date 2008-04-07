@@ -190,7 +190,7 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 				if(!strcmp(record->name, g_list_nth_data(params, 2)))
 				{
 					lp_record_ver *ver = g_list_nth_data(record->versions, 0);
-					lp_send(server, "privmsg %s :%s", to, ver->content);
+					lp_send(server, "privmsg %s :%s", to, ver->content->str);
 					found = 1;
 					break;
 				}

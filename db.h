@@ -2,7 +2,7 @@ typedef struct __lp_record_ver
 {
 	int date;
 	char *author;
-	char *content;
+	GString *content;
 } lp_record_ver;
 
 typedef struct __lp_record

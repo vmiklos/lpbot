@@ -22,7 +22,7 @@ static lp_record_ver *parseVersion(xmlDoc *doc, xmlNode *cur)
 		if ((!xmlStrcmp(cur->name, (const xmlChar *)"author")))
 			ver->author = strdup((char*)key);
 		if ((!xmlStrcmp(cur->name, (const xmlChar *)"content")))
-			ver->content = strdup((char*)key);
+			ver->content = g_string_new((char*)key);
 		xmlFree(key);
 		cur = cur->next;
 	}
@@ -118,7 +118,7 @@ int saveRecords(char *docname)
 			xmlTextWriterSetIndent(writer, 3);
 			xmlTextWriterWriteFormatElement(writer, BAD_CAST "date", "%d", ver->date);
 			xmlTextWriterWriteFormatElement(writer, BAD_CAST "author", "%s", ver->author);
-			xmlTextWriterWriteFormatElement(writer, BAD_CAST "content", "%d", ver->content);
+			xmlTextWriterWriteFormatElement(writer, BAD_CAST "content", "%d", ver->content->str);
 			xmlTextWriterSetIndent(writer, 2);
 			xmlTextWriterEndElement(writer);
 		}
