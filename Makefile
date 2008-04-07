@@ -12,6 +12,9 @@ lpbot: lpbot.o servers.o users.o config.o db.o
 
 doc: HEADER.html Changelog
 
+clean:
+	rm -f *.o lpbot
+
 HEADER.html: README Makefile
 	ln -s README HEADER.txt
 	asciidoc -a toc -a numbered -a sectids -a encoding=iso-8859-2 -a lang=hu HEADER.txt

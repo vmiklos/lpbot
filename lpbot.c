@@ -170,6 +170,19 @@ int lp_identified(char *who)
 	return 0;
 }
 
+lp_user *lp_find_user(char *who)
+{
+	int i;
+
+	for(i=0;i<g_list_length(config->users);i++)
+	{
+		lp_user *user = g_list_nth_data(config->users, i);
+		if(!strcmp(user->login, who) && user->identified)
+			return user;
+	}
+	return NULL;
+}
+
 int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 {
 	int i;
@@ -197,6 +210,42 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 			}
 			if(!found)
 				lp_send(server, "privmsg %s :no such record", to);
+		}
+		else if(!strcmp("put", g_list_nth_data(params, 1)) && g_list_length(params) > 3)
+		{
+			if(lp_identified(msg->from))
+			{
+				lp_user *user = lp_find_user(msg->from);
+				if(user->rights & LP_RIGHT_DB)
+				{
+					lp_record *record;
+					for(i=0;i<g_list_length(config->records);i++)
+					{
+						record = g_list_nth_data(config->records, i);
+						if(!strcmp(record->name, g_list_nth_data(params, 2)))
+						{
+							found = 1;
+							break;
+						}
+					}
+					if(!found)
+					{
+						record = g_new0(lp_record, 1);
+						record->name = g_strdup(g_list_nth_data(params, 2));
+						config->records = g_list_append(config->records, record);
+					}
+					lp_record_ver *ver = g_new0(lp_record_ver, 1);
+					ver->date = time(NULL);
+					ver->author = g_strdup(msg->from);
+					ver->content = g_string_new(g_strdup(g_list_nth_data(params, 3)));
+					record->versions = g_list_insert(record->versions, ver, 0);
+					saveRecords("db.xml");
+				}
+				else
+					lp_send(server, "privmsg %s :you don't have rights to alter the db", to);
+			}
+			else
+				lp_send(server, "privmsg %s :identify first to alter the db", to);
 		}
 	}
 	if(!strcmp("whoami", g_list_nth_data(params, 0)))

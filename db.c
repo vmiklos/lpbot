@@ -112,13 +112,13 @@ int saveRecords(char *docname)
 		xmlTextWriterWriteFormatElement(writer, BAD_CAST "name", "%s", record->name);
 		for(j=0;j<g_list_length(record->versions);j++)
 		{
-			lp_record_ver *ver = g_list_nth_data(record->versions, i);
+			lp_record_ver *ver = g_list_nth_data(record->versions, j);
 
 			xmlTextWriterStartElement(writer, BAD_CAST "version");
 			xmlTextWriterSetIndent(writer, 3);
 			xmlTextWriterWriteFormatElement(writer, BAD_CAST "date", "%d", ver->date);
 			xmlTextWriterWriteFormatElement(writer, BAD_CAST "author", "%s", ver->author);
-			xmlTextWriterWriteFormatElement(writer, BAD_CAST "content", "%d", ver->content->str);
+			xmlTextWriterWriteFormatElement(writer, BAD_CAST "content", "%s", ver->content->str);
 			xmlTextWriterSetIndent(writer, 2);
 			xmlTextWriterEndElement(writer);
 		}
