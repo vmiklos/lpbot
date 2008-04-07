@@ -25,7 +25,7 @@ clean:
 
 HEADER.html: README Makefile
 	ln -s README HEADER.txt
-	asciidoc -a toc -a numbered -a sectids -a encoding=iso-8859-2 -a lang=hu HEADER.txt
+	asciidoc -a toc -a numbered -a sectids HEADER.txt
 	rm HEADER.txt
 
 Changelog: .git/refs/heads/master
