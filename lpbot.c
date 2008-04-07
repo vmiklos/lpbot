@@ -157,6 +157,19 @@ char *lp_to(lp_server *server, lp_msg *msg)
 	return ret;
 }
 
+int lp_identified(char *who)
+{
+	int i;
+
+	for(i=0;i<g_list_length(config->users);i++)
+	{
+		lp_user *user = g_list_nth_data(config->users, i);
+		if(!strcmp(user->login, who) && user->identified)
+			return 1;
+	}
+	return 0;
+}
+
 int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 {
 	int i;
@@ -168,13 +181,9 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 		lp_send(server, "privmsg %s :pong", to);
 	if(!strcmp("whoami", g_list_nth_data(params, 0)))
 	{
-		for(i=0;i<g_list_length(config->users);i++)
-		{
-			lp_user *user = g_list_nth_data(config->users, i);
-			if(!strcmp(user->login, msg->from) && user->identified)
-				lp_send(server, "privmsg %s :i know who you are, %s.",
-						to, user->login);
-		}
+		if(lp_identified(msg->from))
+			lp_send(server, "privmsg %s :i know who you are, %s.",
+					to, msg->from);
 	}
 	if(!strcmp("identify", g_list_nth_data(params, 0)))
 	{
