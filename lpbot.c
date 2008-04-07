@@ -337,6 +337,8 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 	}
 	if(!strcmp("quit", g_list_nth_data(params, 0)) && server->is_console)
 	{
+		lp_user *user = lp_find_user(msg->from);
+		user->identified = 0;
 		lp_disconnect(server, "bye");
 	}
 	return 0;
@@ -446,7 +448,7 @@ int lp_connect(lp_server *server)
 
 int lp_disconnect(lp_server *server, char *msg)
 {
-	if(msg && !server->is_console)
+	if(msg)
 		lp_send(server, "quit :%s", msg);
 	if(server->is_console)
 		shutdown(server->sock, SHUT_RDWR);
