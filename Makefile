@@ -19,6 +19,8 @@ lpbotctl: lpbotctl.o $(OBJS)
 	gcc -MM *.c > .depend
 
 doc: HEADER.html Changelog
+	rm -rf apidocs
+	doxygen
 
 clean:
 	rm -f *.o lpbot
