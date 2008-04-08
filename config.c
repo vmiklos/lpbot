@@ -106,9 +106,18 @@ int parseConfig(char *docname)
  */
 void lp_config_free(lp_config *cfg)
 {
+	int i;
+	for(i=0;i<g_list_length(cfg->servers);i++)
+		lp_server_free(g_list_nth_data(cfg->servers, i));
 	g_list_free(cfg->servers);
+	for(i=0;i<g_list_length(cfg->users);i++)
+		lp_user_free(g_list_nth_data(cfg->users, i));
 	g_list_free(cfg->users);
+	for(i=0;i<g_list_length(cfg->records);i++)
+		lp_record_free(g_list_nth_data(cfg->records, i));
 	g_list_free(cfg->records);
+	for(i=0;i<g_list_length(cfg->rsslist);i++)
+		lp_rss_free(g_list_nth_data(cfg->rsslist, i));
 	g_list_free(cfg->rsslist);
 	if(cfg->ident_to)
 		free(cfg->ident_to);
