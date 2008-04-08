@@ -74,4 +74,14 @@ int check_rss(lp_rss *rss)
 	mrss_free (data);
 	return 0;
 }
+
+/** Frees an rss feed.
+ * @param rss the rss feed to free
+ */
+void lp_rss_free(lp_rss *rss)
+{
+	free(rss->name);
+	free(rss->url);
+	free(rss->channel);
+}
 /* @} */
