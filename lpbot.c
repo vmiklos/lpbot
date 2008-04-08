@@ -1,5 +1,9 @@
 #include "lpbot.h"
 
+/*
+ * The main function of the bot
+ * @return 0 on success, -1 on error
+ */
 int main()
 {
 	int i;

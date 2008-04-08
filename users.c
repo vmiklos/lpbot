@@ -6,6 +6,12 @@
 
 #include "lpbot.h"
 
+/*
+ * Parses an entry of a user in the config
+ * @param doc the xml document
+ * @param cur the current xml node
+ * @return 0 on success, -1 on failure
+ */
 int parseUser(xmlDoc *doc, xmlNode *cur)
 {
 	xmlChar *key;

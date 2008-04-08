@@ -13,6 +13,12 @@
 
 lp_config *config;
 
+/*
+ * Resolves a hostname.
+ * @param server the hostname to resolve
+ * @param host pointer to the return value
+ * @return -1 on error, 0 on success
+ */
 int lp_resolve(char *server, struct hostent *host)
 {
 	struct hostent *ptr;
@@ -27,6 +33,10 @@ int lp_resolve(char *server, struct hostent *host)
 	return 0;
 }
 
+/*
+ * Creates an IPV4 socket.
+ * @return -1 on error, 0 on success
+ */
 int lp_create_sock()
 {
 	int sock;
@@ -36,6 +46,12 @@ int lp_create_sock()
 	return sock;
 }
 
+/*
+ * Sends data to a server.
+ * @param server the server pointer
+ * @param fmt format string
+ * @return 0 on success, -1 on error
+ */
 int lp_send(lp_server* server, char *fmt, ...)
 {
 	va_list ap;
@@ -70,6 +86,10 @@ int lp_send(lp_server* server, char *fmt, ...)
 	return write(server->sock, buf, strlen(buf));
 }
 
+/*
+ * Dumps an IRC message for debugging purposes
+ * @param msg the message
+ */
 void lp_dump_msg(lp_msg *msg)
 {
 	int i;
@@ -84,6 +104,11 @@ void lp_dump_msg(lp_msg *msg)
 	printf("\n");
 }
 
+/*
+ * Parses an IRC message
+ * @param str message to parse
+ * @return NULL on error, the message on success
+ */
 lp_msg *lp_parse(char *str)
 {
 	char *p;
@@ -133,12 +158,21 @@ lp_msg *lp_parse(char *str)
 	return msg;
 }
 
+/*
+ * Frees a message.
+ * @param msg the message
+ */
 void lp_msg_free(lp_msg *msg)
 {
 	free(msg->raw);
 	free(msg);
 }
 
+/*
+ * Pings the server and reconnets on timeout.
+ * @param data not used
+ * @return TRUE on success, FALSE on error
+ */
 int lp_ping(gpointer data)
 {
 	lp_server *server = (lp_server*)data;
@@ -153,6 +187,11 @@ int lp_ping(gpointer data)
 	return TRUE;
 }
 
+/*
+ * Checks each RSS feed for new entries
+ * @param data not used
+ * @return TRUE on success, FALSE on error
+ */
 int lp_check_rss(gpointer data)
 {
 	int i;
@@ -165,6 +204,13 @@ int lp_check_rss(gpointer data)
 	return TRUE;
 }
 
+/*
+ * Returns the user name in case of a query, and the channel name in
+ * case the message was public.
+ * @param server the server of the message
+ * @param msg message
+ * @return the user or channel name
+ */
 char *lp_to(lp_server *server, lp_msg *msg)
 {
 	// if the msg is from a channel, then returns the channel, if
@@ -178,6 +224,11 @@ char *lp_to(lp_server *server, lp_msg *msg)
 	return ret;
 }
 
+/*
+ * Checks if a user has been identified.
+ * @param who the login of the user
+ * @return 1 if yes, 0 if no
+ */
 int lp_identified(char *who)
 {
 	lp_user *user = lp_find_user(who);
@@ -186,6 +237,11 @@ int lp_identified(char *who)
 	return 0;
 }
 
+/*
+ * Searches for a user
+ * @param who the user login
+ * @return the lp_user pointer
+ */
 lp_user *lp_find_user(char *who)
 {
 	int i;
@@ -199,6 +255,12 @@ lp_user *lp_find_user(char *who)
 	return NULL;
 }
 
+/*
+ * Handles a bot command. It can be a highlight or a private message.
+ * @param server the server of the message
+ * @param msg message
+ * @param params the message parameters
+ */
 int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 {
 	int i;
@@ -401,6 +463,13 @@ int lp_handle_command(lp_server *server, lp_msg *msg, GList *params)
 	return TRUE;
 }
 
+/*
+ * Input handler for IRC messages
+ * @param source not used
+ * @param condition not used
+ * @param data the server pointer
+ * @return TRUE on success, FALSE on error
+ */
 int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	char c = 0, buf[IRC_LINE_LENGHT+1] = "";
@@ -480,6 +549,12 @@ int lp_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	return TRUE;
 }
 
+/*
+ * Connects to an TCP server, if server->nick is given, then it logins
+ * in to an IRC server as well.
+ * @param server the server to connect to
+ * @return -1 on error, 0 on success
+ */
 int lp_connect(lp_server *server)
 {
 	struct hostent host;
@@ -507,6 +582,12 @@ int lp_connect(lp_server *server)
 	return 0;
 }
 
+/*
+ * Disconnects from a server
+ * @param server the server
+ * @param msg quit message
+ * @return 0 on success, -1 on error
+ */
 int lp_disconnect(lp_server *server, char *msg)
 {
 	if(msg)
@@ -517,6 +598,12 @@ int lp_disconnect(lp_server *server, char *msg)
 	return 0;
 }
 
+/*
+ * Reconnects to a server
+ * @param server the server
+ * @param msg the quit message
+ * @return 0 on success, -1 on error
+ */
 int lp_reconnect(lp_server *server, char *msg)
 {
 	lp_disconnect(server, msg);
@@ -524,6 +611,13 @@ int lp_reconnect(lp_server *server, char *msg)
 	return 0;
 }
 
+/*
+ * Listens for new clients to accept them.
+ * @param source not used
+ * @param condition not used
+ * @param data server socket
+ * @return TRUE on success, FALSE on error
+ */
 int lp_listen(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	int sock = (int)data;
@@ -536,6 +630,10 @@ int lp_listen(GIOChannel *source, GIOCondition condition, gpointer data)
 	return TRUE;
 }
 
+/*
+ * Start the bot control daemon
+ * @return 0 on success, -1 on error
+ */
 int lp_serve()
 {
 	int sock = lp_create_sock();

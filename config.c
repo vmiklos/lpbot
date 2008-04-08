@@ -6,6 +6,12 @@
 
 #include "lpbot.h"
 
+/*
+ * Parses the general options of the bot.
+ * @param doc the xml document
+ * @param cur the current xml node
+ * @return 0 on success, -1 on failure
+ */
 static int parseOptions(xmlDoc *doc, xmlNode *cur)
 {
 	xmlChar *key;
@@ -29,6 +35,11 @@ static int parseOptions(xmlDoc *doc, xmlNode *cur)
 	}
 	return(0);
 }
+/*
+ * Parses the configuration file of the bot.
+ * @param docname the filename of the config xml
+ * @return 0 on success, -1 on failure
+ */
 int parseConfig(char *docname)
 {
 	xmlDocPtr doc;

@@ -8,6 +8,12 @@
 
 #include "lpbot.h"
 
+/*
+ * Parses a given version of a database record
+ * @param doc the xml document
+ * @param cur the current xml node
+ * @return 0 on success, -1 on failure
+ */
 static lp_record_ver *parseVersion(xmlDoc *doc, xmlNode *cur)
 {
 	xmlChar *key;
@@ -29,6 +35,12 @@ static lp_record_ver *parseVersion(xmlDoc *doc, xmlNode *cur)
 	return ver;
 }
 
+/*
+ * Parses a given record of the database
+ * @param doc the xml document
+ * @param cur the current xml node
+ * @return 0 on success, -1 on failure
+ */
 static int parseRecord(xmlDoc *doc, xmlNode *cur)
 {
 	xmlChar *key;
@@ -49,6 +61,11 @@ static int parseRecord(xmlDoc *doc, xmlNode *cur)
 	return(0);
 }
 
+/*
+ * Parses the database file of the bot.
+ * @param docname the filename of the db xml
+ * @return 0 on success, -1 on failure
+ */
 int parseRecords(char *docname)
 {
 	xmlDocPtr doc;
@@ -93,6 +110,11 @@ int parseRecords(char *docname)
 	return(0);
 }
 
+/*
+ * Writes the database of the bot to a file.
+ * @param docname the filename of the db xml
+ * @return 0 on success, -1 on failure
+ */
 int saveRecords(char *docname)
 {
 	int i, j;

@@ -18,6 +18,13 @@
 
 lp_server *server, *kbd;
 
+/*
+ * Handles the incoming messages from the server
+ * @param source not used
+ * @param condition not used
+ * @param data not used
+ * @return TRUE on success, FALSE on error
+ */
 int srv_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	char c = 0, buf[IRC_LINE_LENGHT+1] = "", *ptr;
@@ -46,6 +53,13 @@ int srv_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	return TRUE;
 }
 
+/*
+ * Handles the input from the standard input
+ * @param source not used
+ * @param condition not used
+ * @param data not used
+ * @return TRUE on success, FALSE on error
+ */
 int kbd_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	char c = 0, buf[IRC_LINE_LENGHT+1] = "", *user = (char*)data;
@@ -68,6 +82,12 @@ int kbd_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	return TRUE;
 }
 
+/*
+ * The main function of the control client.
+ * @param argv number of parameters
+ * @param argc the parameters
+ * @return 0 on success, -1 on error
+ */
 int main(int argv, char **argc)
 {
 	GMainLoop *loop;

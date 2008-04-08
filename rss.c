@@ -6,6 +6,12 @@
 
 #include "lpbot.h"
 
+/*
+ * Parses the RSS part of the configuration file.
+ * @param doc the xml document
+ * @param cur the current xml node
+ * @return 0 on success, -1 on failure
+ */
 int parseRss(xmlDoc *doc, xmlNode *cur)
 {
 	xmlChar *key;
@@ -31,6 +37,11 @@ int parseRss(xmlDoc *doc, xmlNode *cur)
 	return 0;
 }
 
+/*
+ * Chesk an RSS feed for new entries.
+ * @param rss the feed
+ * @return -1 on error, 0 on success
+ */
 int check_rss(lp_rss *rss)
 {
 	mrss_t *data;
