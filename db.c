@@ -158,7 +158,10 @@ int saveRecords(char *docname)
  */
 void lp_record_free(lp_record *rec)
 {
+	int i;
 	free(rec->name);
+	for(i=0;i<g_list_length(rec->versions);i++)
+		lp_record_ver_free(g_list_nth_data(rec->versions, i));
 	g_list_free(rec->versions);
 }
 
