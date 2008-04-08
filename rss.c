@@ -6,8 +6,11 @@
 
 #include "lpbot.h"
 
-/*
- * Parses the RSS part of the configuration file.
+/** @defgroup rss The RSS parser
+ * @{
+ */
+
+/** Parses the RSS part of the configuration file.
  * @param doc the xml document
  * @param cur the current xml node
  * @return 0 on success, -1 on failure
@@ -71,3 +74,4 @@ int check_rss(lp_rss *rss)
 	mrss_free (data);
 	return 0;
 }
+/* @} */

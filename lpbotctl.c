@@ -18,8 +18,11 @@
 
 lp_server *server, *kbd;
 
-/*
- * Handles the incoming messages from the server
+/** @defgroup lptbotctl The bot controller
+ * @{
+ */
+
+/** Handles the incoming messages from the server
  * @param source not used
  * @param condition not used
  * @param data not used
@@ -53,8 +56,7 @@ int srv_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	return TRUE;
 }
 
-/*
- * Handles the input from the standard input
+/** Handles the input from the standard input
  * @param source not used
  * @param condition not used
  * @param data not used
@@ -82,8 +84,7 @@ int kbd_handler(GIOChannel *source, GIOCondition condition, gpointer data)
 	return TRUE;
 }
 
-/*
- * The main function of the control client.
+/** The main function of the control client.
  * @param argv number of parameters
  * @param argc the parameters
  * @return 0 on success, -1 on error
@@ -131,3 +132,4 @@ int main(int argv, char **argc)
 	g_main_loop_run(loop);
 	return 0;
 }
+/* @} */

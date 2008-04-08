@@ -1,7 +1,10 @@
 #include "lpbot.h"
 
-/*
- * The main function of the bot
+/** @defgroup lpbot The IRC bot
+ * @{
+ */
+
+/** The main function of the bot
  * @return 0 on success, -1 on error
  */
 int main()
@@ -22,3 +25,4 @@ int main()
 	g_main_loop_run(loop);
 	return 0;
 }
+/* @} */

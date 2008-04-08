@@ -6,8 +6,11 @@
 
 #include "lpbot.h"
 
-/*
- * Parses an entry of a user in the config
+/** @defgroup users Handling of users
+ * @{
+ */
+
+/** Parses an entry of a user in the config
  * @param doc the xml document
  * @param cur the current xml node
  * @return 0 on success, -1 on failure
@@ -44,3 +47,4 @@ int parseUser(xmlDoc *doc, xmlNode *cur)
 	config->users = g_list_append(config->users, user);
 	return(0);
 }
+/* @} */

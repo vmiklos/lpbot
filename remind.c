@@ -10,8 +10,11 @@
 
 #include "lpbot.h"
 
-/*
- * Sends a password reminder to a given user.
+/** @defgroup remind The password reminder
+ * @{
+ */
+
+/** Sends a password reminder to a given user.
  * @param user the user pointer
  * @return 0 on success, -1 on error
  */
@@ -47,3 +50,4 @@ int remind(lp_user *user)
 	close(server->sock);
 	return 0;
 }
+/* @} */

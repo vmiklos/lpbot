@@ -6,8 +6,11 @@
 
 #include "lpbot.h"
 
-/*
- * Searches for a user
+/** @defgroup servers Handling or servers
+ * @{
+ */
+
+/** Searches for a user
  * @param chatname the id of the server
  * @return the server pointer on success, NULL on error
  */
@@ -24,8 +27,7 @@ lp_server *lp_find_server(char *chatname)
 	return NULL;
 }
 
-/*
- * Parses an entry of a server in the config
+/** Parses an entry of a server in the config
  * @param doc the xml document
  * @param cur the current xml node
  * @return 0 on success, -1 on failure
@@ -60,3 +62,4 @@ int parseServer(xmlDoc *doc, xmlNode *cur)
 	config->servers = g_list_append(config->servers, server);
 	return(0);
 }
+/* @} */
