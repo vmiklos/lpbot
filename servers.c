@@ -62,4 +62,17 @@ int parseServer(xmlDoc *doc, xmlNode *cur)
 	config->servers = g_list_append(config->servers, server);
 	return(0);
 }
+
+/** Frees a server.
+ * @param srv the server to free
+ */
+void lp_server_free(lp_server *srv)
+{
+	free(srv->chatname);
+	free(srv->address);
+	free(srv->nick);
+	free(srv->username);
+	free(srv->realname);
+	g_list_free(srv->channels);
+}
 /* @} */
