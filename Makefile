@@ -23,7 +23,7 @@ doc: HEADER.html Changelog
 	doxygen
 
 clean:
-	rm -f *.o lpbot
+	rm -f *.o lpbot lpbotctl
 
 HEADER.html: README Makefile
 	ln -s README HEADER.txt
