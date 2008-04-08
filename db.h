@@ -13,3 +13,5 @@ typedef struct __lp_record
 
 int parseRecords(char *docname);
 int saveRecords(char *docname);
+void lp_record_free(lp_record *rec);
+void lp_record_ver_free(lp_record_ver *ver);

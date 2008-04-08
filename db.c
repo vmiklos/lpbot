@@ -152,4 +152,22 @@ int saveRecords(char *docname)
 	xmlFreeTextWriter(writer);
 	return 0;
 }
+
+/** Frees a record.
+ * @param rec the record to free
+ */
+void lp_record_free(lp_record *rec)
+{
+	free(rec->name);
+	g_list_free(rec->versions);
+}
+
+/** Frees a record version.
+ * @param ver the record version to free
+ */
+void lp_record_ver_free(lp_record_ver *ver)
+{
+	free(ver->author);
+	g_string_free(ver->content, TRUE);
+}
 /* @} */
