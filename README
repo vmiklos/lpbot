@@ -102,4 +102,9 @@ The following features are available for a user:
   `eval <command>` parameter is available for administrators to make the
   bot execute any IRC command.
 
+== Developer guide
+
+The API documentation of the modules is available
+link:apidocs/html/modules.html[here].
+
 // vim: ft=asciidoc
