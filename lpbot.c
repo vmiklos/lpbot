@@ -23,6 +23,7 @@ int main()
 
 	loop = g_main_loop_new(NULL, TRUE);
 	g_main_loop_run(loop);
+	lp_config_free(config);
 	return 0;
 }
 /* @} */

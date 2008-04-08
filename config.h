@@ -16,3 +16,4 @@ typedef struct __lp_config
 } lp_config;
 
 int parseConfig(char *docname);
+void lp_config_free(lp_config *cfg);

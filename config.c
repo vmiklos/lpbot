@@ -101,4 +101,16 @@ int parseConfig(char *docname)
 	xmlFreeDoc(doc);
 	return(0);
 }
+/** Frees a config ptr.
+ * @param cfg the config ptr
+ */
+void lp_config_free(lp_config *cfg)
+{
+	g_list_free(cfg->servers);
+	g_list_free(cfg->users);
+	g_list_free(cfg->records);
+	g_list_free(cfg->rsslist);
+	if(cfg->ident_to)
+		free(cfg->ident_to);
+}
 /* @} */
