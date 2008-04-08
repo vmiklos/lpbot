@@ -582,7 +582,6 @@ int lp_disconnect(lp_server *server, char *msg)
 {
 	if(msg)
 		lp_send(server, "quit :%s", msg);
-	shutdown(server->sock, SHUT_RDWR);
 	close(server->sock);
 	server->sock = 0;
 	return 0;

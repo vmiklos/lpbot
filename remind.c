@@ -46,7 +46,6 @@ int remind(lp_user *user)
 	lp_send(server, "Your password is '%s'.", user->pass);
 	lp_send(server, ".");
 	lp_send(server, "QUIT");
-	shutdown(server->sock, SHUT_RDWR);
 	close(server->sock);
 	return 0;
 }
