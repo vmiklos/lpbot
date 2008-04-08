@@ -11,3 +11,4 @@ typedef struct __lp_user
 } lp_user;
 
 int parseUser(xmlDoc *doc, xmlNode *cur);
+void lp_user_free(lp_user *usr);

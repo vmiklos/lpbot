@@ -47,4 +47,13 @@ int parseUser(xmlDoc *doc, xmlNode *cur)
 	config->users = g_list_append(config->users, user);
 	return(0);
 }
+/** Frees a user.
+ * @param usr the user to free
+ */
+void lp_user_free(lp_user *usr)
+{
+	free(usr->login);
+	free(usr->email);
+	free(usr->pass);
+}
 /* @} */
