@@ -1,6 +1,10 @@
 = IRC bot
 Miklos Vajna <vmiklos@vmiklos.hu>
 
+== Status
+
+This project was a homework for our 'Linux Programming' course.
+
 == Specification
 
 === Functions
