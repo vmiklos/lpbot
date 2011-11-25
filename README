@@ -111,4 +111,8 @@ The following features are available for a user:
 The API documentation of the modules is available
 link:apidocs/html/modules.html[here].
 
+== Download
+
+From https://github.com/vmiklos/lpbot[github].
+
 // vim: ft=asciidoc
